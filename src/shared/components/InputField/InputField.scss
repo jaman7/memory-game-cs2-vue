@@ -1,0 +1,27 @@
+.input-field {
+  margin-bottom: var(--spacing-md);
+
+  .input-label {
+    display: block;
+    font-size: var(--font-size-base);
+    color: var(--main-text-placeholder);
+  }
+
+  .input-element {
+    width: 100%;
+    margin-top: 4px;
+    padding: 8px;
+    border: 1px solid var(--main-border-gray);
+    border-radius: 8px;
+    outline: none;
+
+    &:focus {
+      border-color: var(--main-border-blue);
+      box-shadow: 0 0 0 2px rgb(9 113 254 / 20%);
+    }
+  }
+
+  .input-description {
+    font-size: 0;
+  }
+}

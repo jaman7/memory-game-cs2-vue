@@ -1,0 +1,52 @@
+{
+  "modalStart": {
+    "title": "Nowa gra",
+    "seedLabel": "Game name (optional)",
+    "seed": "A unique name to generate repeatable layouts",
+    "difficultyLabel": "Difficulty level",
+    "difficulty": "Select difficulty",
+    "button": "Start",
+    "noActiveGameInfo": "No active game found – select difficulty and start playing"
+  },
+  "modalEnd": {
+    "title": "Congratulations!",
+    "message": "You have completed the game in {time} and {moves} movements",
+    "buttonReplay": "Play again (same board)",
+    "buttonNew": "Select a new board"
+  },
+  "difficultyDict": {
+    "easy": "Easy (6 pairs)",
+    "medium": "Medium (10 pairs)",
+    "hard": "Hard (15 pairs)",
+    "unknown": "Unknown"
+  },
+  "game": {
+    "time": "Time: {n}s",
+    "moves": "Moves: {n}",
+    "canvasLabel": "Memory game board with tiles"
+  },
+  "sidebar": {
+    "title": "Game panel",
+    "time": "Time:",
+    "moves": "Movements:",
+    "seed": "Seed:",
+    "difficulty": "Level:",
+    "buttonReplay": "Restarting the game",
+    "buttonNew": "New game"
+  },
+  "history": {
+    "title": "Game History",
+    "timeMoves": "{time}s {moves} moves",
+    "error": "No results saved."
+  },
+  "errors": {
+    "canvasFallBack": "Your browser does not support the canvas element."
+  },
+  "devToolPanel": {
+    "title": "Dev Tool Panel",
+    "history": "Game history",
+    "btnSave": "Save",
+    "btnReset": "Reset",
+    "moves": "Moves"
+  }
+}

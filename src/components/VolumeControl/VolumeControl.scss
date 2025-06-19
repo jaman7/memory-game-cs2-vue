@@ -1,0 +1,116 @@
+@import '@scss/variables';
+@import '@scss/extend';
+
+$track-height: 1.2rem;
+$thumb-size: 1.2rem;
+$thumb-radius: 0.6rem;
+$padding: 0.25rem;
+
+.volume {
+  &-control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &-label {
+    color: var(--main-text-blue);
+    font-weight: 500;
+  }
+
+  &-slider-wrapper {
+    position: relative;
+  }
+
+  &-indicator {
+    position: absolute;
+    top: -1.8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--main-bg-orange);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.4rem;
+
+    @extend %shared-box-shadow;
+  }
+}
+
+.range {
+  &-volume {
+    width: 100%;
+    height: $track-height;
+    border-radius: $track-height;
+    appearance: none;
+    background:
+      linear-gradient(#f8dd36, #d68706) 0 0 / var(--pos) 100% no-repeat,
+      linear-gradient(#efefef, #c9c9c9);
+    box-shadow:
+      inset 0 1px 4px #8c8c8c,
+      0 -1px #eaeaea,
+      0 1px #fff;
+    cursor: pointer;
+    padding: 0;
+
+    &::-webkit-slider-runnable-track {
+      height: $track-height;
+      border-radius: $track-height;
+      background: transparent;
+    }
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      width: $thumb-size;
+      height: $thumb-size;
+      margin-top: calc(($track-height - $thumb-size) / 2);
+      background:
+        linear-gradient(#c5c5c5, whitesmoke) padding-box,
+        linear-gradient(#fbfbfb, #c2c2c2) border-box;
+      border: solid $padding transparent;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px #7d7d7d;
+      cursor: pointer;
+    }
+
+    &::-moz-range-track {
+      height: $track-height;
+      border-radius: $track-height;
+      background:
+        linear-gradient(#f8dd36, #d68706) var(--pos) / var(--pos) no-repeat,
+        linear-gradient(#efefef, #c9c9c9);
+      box-shadow: inset 0 1px 4px #8c8c8c;
+    }
+
+    &::-moz-range-thumb {
+      width: $thumb-size;
+      height: $thumb-size;
+      background:
+        linear-gradient(#c5c5c5, whitesmoke) padding-box,
+        linear-gradient(#fbfbfb, #c2c2c2) border-box;
+      border: solid $padding transparent;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px #7d7d7d;
+      cursor: pointer;
+    }
+  }
+}
+
+.speaker {
+  background-color: transparent;
+  padding: 2px;
+
+  &:hover {
+    color: var(--main-text-white);
+  }
+
+  &.muted {
+    background-color: var(--main-bg-orange) !important;
+  }
+}

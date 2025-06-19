@@ -1,0 +1,28 @@
+.select-field {
+  margin-bottom: var(--spacing-md);
+
+  .select-label {
+    display: block;
+    font-size: var(--font-size-base);
+    color: var(--main-text-placeholder);
+  }
+
+  .select-element {
+    width: 100%;
+    margin-top: 4px;
+    padding: 8px;
+    border: 1px solid var(--main-border-gray);
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+
+    &:focus {
+      border-color: var(--main-border-blue);
+      box-shadow: 0 0 0 2px rgb(9 113 254 / 20%);
+    }
+  }
+
+  .select-description {
+    font-size: 0;
+  }
+}

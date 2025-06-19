@@ -1,0 +1,56 @@
+@use '../extend' as *;
+@use '../mixins' as *;
+@use 'sass:color';
+
+.modal {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(var(--main-bg-blue), 0.5);
+  z-index: 1050;
+  inset: 0;
+
+  &-content {
+    background-color: var(--main-bg-white);
+    border-radius: 8px;
+    padding: 1rem;
+    width: 100%;
+    max-width: 500px;
+
+    @extend %shared-box-shadow;
+
+    @include mq(maxxsm) {
+      width: calc(100% - 24px);
+    }
+  }
+
+  &-title {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  &-info {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--main-text-placeholder);
+    margin-bottom: 1rem;
+  }
+
+  &-message {
+    color: var(--main-text-primary);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    @include mq(minlg) {
+      flex-direction: row;
+      gap: 1rem;
+    }
+  }
+}

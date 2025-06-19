@@ -1,0 +1,30 @@
+root = true
+
+[*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,css,scss,sass,less,styl}]
+charset = utf-8
+indent_size = 2
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.ts]
+quote_type = single
+
+[*.tsx]
+quote_type = single
+
+[*.js]
+quote_type = single
+
+[*.jsx]
+quote_type = single
+
+[*.vue]
+quote_type = single
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+
+[*.scss]
+trim_trailing_whitespace = true

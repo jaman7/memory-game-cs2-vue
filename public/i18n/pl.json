@@ -1,0 +1,52 @@
+{
+  "modalStart": {
+    "title": "Nowa gra",
+    "seedLabel": "Seed (opcjonalnie)",
+    "seed": "Unikalna nazwa do powtarzalnych układów",
+    "difficultyLabel": "Poziom trudności",
+    "difficulty": "Wybierz poziom trudności",
+    "button": "Rozpocznij",
+    "noActiveGameInfo": "Brak aktywnej gry – wybierz tryb i rozpocznij nową rozgrywkę"
+  },
+  "modalEnd": {
+    "title": "Gratulacje!",
+    "message": "Ukończyłeś grę w {time} i {moves} ruchach",
+    "buttonReplay": "Zagraj ponownie (ta samą planszę)",
+    "buttonNew": "Wybierz nową planszę"
+  },
+  "difficultyDict": {
+    "easy": "Łatwy (6 par)",
+    "medium": "Średni (10 par)",
+    "hard": "Trudny (15 par)",
+    "unknown": "Nieznany"
+  },
+  "game": {
+    "time": "Czas: {n}s",
+    "moves": "Ruchy: {n}",
+    "canvasLabel": "Plansza gry Memory z kafelkami"
+  },
+  "sidebar": {
+    "title": "Panel gry",
+    "time": "Czas:",
+    "moves": "Ruchy:",
+    "seed": "Seed:",
+    "difficulty": "Poziom:",
+    "buttonReplay": "Restart gry",
+    "buttonNew": "Nowa gra"
+  },
+  "history": {
+    "title": "Historia gier",
+    "timeMoves": "{time}s {moves} ruchów",
+    "error": "Brak zapisanych wyników."
+  },
+  "errors": {
+    "canvasFallBack": "Twoja przeglądarka nie obsługuje elementu canvas."
+  },
+  "devToolPanel": {
+    "title": "Dev Tool Panel",
+    "history": "Historia gier",
+    "btnSave": "Zapisz",
+    "btnReset": "Reset",
+    "moves": "Ruchy"
+  }
+}
