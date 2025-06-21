@@ -2,17 +2,90 @@
 @import '@scss/extend';
 
 .sidebar {
-  width: 100%;
-  max-width: 400px;
-  padding: 16px;
   background-color: var(--main-bg-secondary);
   border-radius: 1rem 0 0 1rem;
+  position: relative;
+  transition: transform 0.5s ease-in-out;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin: 0 auto;
+  transform: translateX(100%);
+  max-height: 100vh;
+  will-change: transform;
 
   @extend %shared-box-shadow;
+  @include scrollbar-vertical;
+
+  @include mq(maxsm) {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+  }
+
+  &.open {
+    transform: translateX(0);
+
+    & .sidebar-container {
+      flex: 0 0 310px;
+      opacity: 1;
+      visibility: visible;
+      padding: 1rem;
+
+      @include mq(maxsm) {
+        flex: 0 0 310px;
+      }
+    }
+
+    & .sidebar-close {
+      transform: translateX(-50%);
+    }
+  }
+
+  &-container {
+    transition:
+      flex-basis 0.5s ease-in-out,
+      opacity 0.5s ease-in-out,
+      visibility 0.5s ease-in-out,
+      padding 0.5s ease-in-out;
+    opacity: 0;
+    gap: 1rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 0;
+    max-width: 320px;
+    padding: 0;
+    overflow: hidden;
+    visibility: hidden;
+    will-change: transform, opacity, flex-basis;
+  }
+
+  &:not(.open) .sidebar-container {
+    pointer-events: none;
+  }
+
+  &-close {
+    position: absolute;
+    top: 5rem;
+    left: 0;
+    transform: translateX(-100%);
+    z-index: 20;
+    will-change: transform;
+    transition: transform 0.5s ease-in-out;
+
+    @include mq(maxsm) {
+      top: 2rem;
+    }
+  }
+
+  & .sidebar-close .arrow-icon {
+    transform: rotate(90deg);
+    transition: transform 0.5s ease-in-out;
+    will-change: transform;
+
+    &.rotated {
+      transform: rotate(-90deg);
+    }
+  }
 
   @include mq(minlg) {
     min-height: 100vh;
@@ -56,7 +129,7 @@
     margin-bottom: 1rem;
 
     & .active {
-      background-color: var(--main-bg-orange) !important;
+      background-color: var(--main-bg-silver-haze) !important;
     }
   }
 
@@ -64,5 +137,28 @@
     width: 20px;
     height: 20px;
     border-radius: 4px;
+  }
+
+  & .rarity-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 0;
+
+    .legend {
+      &-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.875rem;
+      }
+
+      &-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+    }
   }
 }

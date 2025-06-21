@@ -9,7 +9,9 @@
       @click="props.handleClick"
     >
       <slot>
-        {{ props?.name ? $t(props.name) : '' }}
+        <template v-if="(props?.name ?? '').length > 0">
+          {{ $t(props.name || '') }}
+        </template>
       </slot>
     </button>
   </template>
@@ -48,7 +50,7 @@ const props = defineProps<IButtonComponent>();
 const restAttrs = useAttrs();
 const { t } = useI18n();
 
-const computedAriaLabelFallback = computed(() => (props.name ? t(props.name) : 'Unnamed Button'));
+const computedAriaLabelFallback = computed(() => ((props.name ?? '').length > 0 ? t(props.name || '') : 'Unnamed Button'));
 
 const computedAriaLabel = computed(() => {
   const hasLabelledBy = 'aria-labelledby' in restAttrs && !!restAttrs['aria-labelledby'];

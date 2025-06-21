@@ -1,5 +1,5 @@
 import { generateShuffledTiles } from '@/shared/utils/generateTiles';
-import { preloadImages } from '@/shared/utils/imageCache';
+import { preloadImagesWithAwait } from '@/shared/utils/imageCache';
 import { isDifficultyType } from '@/shared/utils/isDifficultyType';
 import { ref } from 'vue';
 
@@ -20,21 +20,10 @@ export function useGameStart() {
 
     const tiles = generateShuffledTiles(seed.value, difficulty.value);
     const imagesToPreload = tiles.map((t) => t.imagePath!).filter(Boolean);
-    preloadImages(imagesToPreload);
 
     isLoading.value = true;
 
-    await Promise.all(
-      imagesToPreload.map(
-        (src) =>
-          new Promise((resolve) => {
-            const img = new Image();
-            img.src = src;
-            if (img.complete) resolve(true);
-            else img.onload = () => resolve(true);
-          })
-      )
-    );
+    await preloadImagesWithAwait(imagesToPreload);
 
     isLoading.value = false;
     return {

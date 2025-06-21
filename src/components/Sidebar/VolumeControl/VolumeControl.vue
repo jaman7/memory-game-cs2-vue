@@ -9,14 +9,9 @@
     }"
   >
     <div class="volume-header">
-      <span class="volume-label">Dźwięk</span>
-      <Button
-        :handleClick="toggleMute"
-        :aria-label="isMuted ? 'Włącz dźwięk' : 'Wycisz dźwięk'"
-        :className="clsx(['speaker', { muted: isMuted }])"
-        variant="round"
-      >
-        <component :is="isMuted ? SpeakerMutedIcon : SpeakerIcon" class="icon-svg" />
+      <span class="volume-label">{{ $t('volumeControl.title') }}</span>
+      <Button :handleClick="toggleMute" :aria-label="isMuted ? 'speaker off' : 'speaker on'" :className="clsx('speaker', { muted: isMuted })" variant="round">
+        <LazyImage :src="`/images/speaker${isMuted ? '-muted' : ''}.svg`" :alt="`speaker${isMuted ? '-muted' : ''}`" />
       </Button>
     </div>
 
@@ -38,13 +33,14 @@
 </template>
 
 <script setup lang="ts">
-import { useSoundSettings } from '@/hooks/useSoundSettings';
-import SpeakerMutedIcon from '@images/speaker-muted.svg';
-import SpeakerIcon from '@images/speaker.svg';
+import { useSoundStore } from '@/stores/useSoundStore';
 import { clsx } from 'clsx';
+import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
 
-const { isMuted, volume, toggleMute, setVolume } = useSoundSettings();
+const soundStore = useSoundStore();
+const { isMuted, volume } = storeToRefs(soundStore);
+const { toggleMute, setVolume } = soundStore;
 
 const localVolume = ref(Math.round(volume.value * 100));
 
@@ -52,7 +48,6 @@ watch(volume, (v) => {
   if (!isMuted.value) {
     localVolume.value = Math.round(v * 100);
   }
-  if (isMuted.value) toggleMute();
 });
 
 function onVolumeChange() {

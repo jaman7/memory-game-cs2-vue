@@ -1,17 +1,19 @@
 @import '@scss/mixins';
+@import '@scss/extend';
 
 .game {
   &-canvas {
     display: flex;
-    flex-direction: column-reverse;
-    align-items: flex-start;
-    gap: 1.5rem;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
     background-color: var(--main-bg-gray);
     padding-top: 0.75rem;
     padding-inline: 0.75rem;
+    overflow-x: hidden;
+    min-height: 100vh;
 
     @include mq(minlg) {
-      flex-direction: row;
       justify-content: space-between;
       padding-left: 1.25rem;
       padding-right: 0;
@@ -34,11 +36,12 @@
     width: 100%;
     background-color: var(--main-bg-blue);
     color: var(--main-text-white);
-    box-shadow: 0 1px 4px var(--main-shadow-primary-color);
     padding: 1rem;
     border-radius: 0.75rem;
     font-size: 1.25rem;
     font-weight: 600;
+
+    @extend %shared-box-shadow;
 
     @include mq(minlg) {
       margin-top: 1rem;
@@ -46,10 +49,11 @@
   }
 
   &-canvas-element {
-    box-shadow: 0 1px 6px var(--main-shadow-primary-color);
     border-radius: 0.75rem;
     max-width: 100%;
     display: block;
     margin-inline: auto;
+
+    @extend %shared-box-shadow;
   }
 }

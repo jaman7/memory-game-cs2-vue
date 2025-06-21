@@ -9,14 +9,15 @@ export function useCanvasRenderer(
   mouseY: Ref<number>,
   hoveredTileId: Ref<number | null>,
   tileSize: Ref<number>,
-  applyTileLayout: () => void
+  applyTileLayout: () => void,
+  fadeStartTime?: Ref<number | null>
 ) {
   function redrawCanvas() {
     const canvas = canvasRef.value;
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    drawBoard(ctx, canvas, tiles.value, { x: mouseX.value, y: mouseY.value }, hoveredTileId.value, tileSize.value);
+    drawBoard(ctx, canvas, tiles.value, { x: mouseX.value, y: mouseY.value }, hoveredTileId.value, tileSize.value, fadeStartTime);
   }
 
   function startAnimationLoop() {
@@ -29,7 +30,7 @@ export function useCanvasRenderer(
             tile.haloAngle = (tile.haloAngle + 0.03) % (Math.PI * 2);
           }
         });
-        drawBoard(ctx, canvas, tiles.value, { x: mouseX.value, y: mouseY.value }, hoveredTileId.value, tileSize.value);
+        drawBoard(ctx, canvas, tiles.value, { x: mouseX.value, y: mouseY.value }, hoveredTileId.value, tileSize.value, fadeStartTime);
       }
       requestAnimationFrame(loop);
     }

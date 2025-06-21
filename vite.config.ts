@@ -6,7 +6,6 @@ import { VueUseComponentsResolver } from 'unplugin-vue-components/resolvers'; //
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
 import vueDevTools from 'vite-plugin-vue-devtools';
-import svgLoader from 'vite-svg-loader';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,7 +13,6 @@ export default defineConfig({
     vue(),
     vueJsx(),
     vueDevTools(),
-    svgLoader(),
     AutoImport({
       imports: ['vue', 'vue-router', '@vueuse/core'],
       dts: 'src/auto-imports.d.ts',
@@ -33,7 +31,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       '@utils': path.resolve(__dirname, './src/shared/utils'),
       '@scss': path.resolve(__dirname, './src/assests/scss'),
-      '@images': path.resolve(__dirname, './src/assests/images'),
     },
   },
   css: {

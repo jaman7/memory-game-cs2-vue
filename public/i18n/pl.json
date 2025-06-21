@@ -28,25 +28,59 @@
   "sidebar": {
     "title": "Panel gry",
     "time": "Czas:",
+    "dateStart": "Data rozpoczęcia:",
     "moves": "Ruchy:",
     "seed": "Seed:",
     "difficulty": "Poziom:",
+    "matchCount": "Liczba dopasowanych:",
+    "mismatchCount": "Liczba nie dopasowanych:",
     "buttonReplay": "Restart gry",
-    "buttonNew": "Nowa gra"
+    "buttonNew": "Nowa gra",
+    "buttonDevTools": "Dev Tools",
+    "statsTitle": "Statystyki globalne",
+    "gamesPlayed": "Rozegrane gry",
+    "avgTime": "Średni czas",
+    "avgMoves": "Średnia liczba ruchów",
+    "totalMatches": "Łączna liczba dopasowań",
+    "totalMismatches": "Łączna liczba niezgodności",
+    "matches": {
+      "match": "Para",
+      "mismatch": "Nietrafione"
+    }
+  },
+  "rarityLegend": {
+    "title": "Legenda",
+    "consumer": "Konsumencka",
+    "industrial": "Przemysłowa",
+    "milspec": "Wojskowa",
+    "restricted": "Ograniczona",
+    "classified": "Klasyfikowana",
+    "covert": "Tajna"
   },
   "history": {
     "title": "Historia gier",
     "timeMoves": "{time}s {moves} ruchów",
+    "matchedCount": " Dopasowania: {matchCount} niezgodności: {mismatchCount}",
+    "matchedMismatch": "Historia match/mismatch",
     "error": "Brak zapisanych wyników."
   },
   "errors": {
     "canvasFallBack": "Twoja przeglądarka nie obsługuje elementu canvas."
+  },
+  "volumeControl": {
+    "title": "Poziom dzwięku"
   },
   "devToolPanel": {
     "title": "Dev Tool Panel",
     "history": "Historia gier",
     "btnSave": "Zapisz",
     "btnReset": "Reset",
-    "moves": "Ruchy"
+    "moves": "Ruchy",
+    "matchHistory": {
+      "title": "Historia match/mismatch",
+      "empty": "Brak danych",
+      "match": "Para",
+      "mismatch": "Nietrafione"
+    }
   }
 }

@@ -37,6 +37,11 @@
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+defineOptions({
+  inheritAttrs: false,
+});
+defineProps<{}>();
+
 const { t } = useI18n();
 const emit = defineEmits<{
   (e: 'start', payload: { seed: string; difficulty: number }): void;

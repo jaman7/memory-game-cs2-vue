@@ -1,0 +1,25 @@
+.tile-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  &--image {
+    max-height: 32px;
+    border-radius: 4px;
+  }
+
+  &--info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &--name {
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  &--rarity {
+    font-size: 0.7rem;
+    color: var(--main-text-blue);
+  }
+}

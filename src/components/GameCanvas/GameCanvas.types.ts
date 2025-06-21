@@ -1,12 +1,24 @@
-export interface GameHistoryEntry {
-  time: number;
-  moves: number;
-  date: string;
-  seed: string;
-  difficulty: number;
+export type Rarity = 'consumer' | 'industrial' | 'milspec' | 'restricted' | 'classified' | 'covert';
+export type MatchResult = 'match' | 'mismatch';
+
+export interface MatchRecord {
+  a: Tile;
+  b: Tile;
+  result: MatchResult;
+  timestamp?: number;
 }
 
-export type Rarity = 'consumer' | 'industrial' | 'milspec' | 'restricted' | 'classified' | 'covert';
+export interface GameHistoryEntry {
+  dateStart: string | null;
+  dateEnd: string | null;
+  time: number;
+  moves: number;
+  seed: string;
+  difficulty: number;
+  matchCount: number;
+  mismatchCount: number;
+  matchedPairs: MatchRecord[];
+}
 
 export interface Tile {
   id: number;
@@ -31,11 +43,15 @@ export interface Skin {
 }
 
 export interface GameState {
+  dateStart: string | null;
   tiles: Tile[];
   elapsedSeconds: number;
   moves: number;
   seed: string;
   difficulty: number;
+  matchCount: number;
+  mismatchCount: number;
+  matchedPairs: MatchRecord[];
 }
 
 export type ParallaxState = {

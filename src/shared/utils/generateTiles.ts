@@ -1,7 +1,7 @@
 import { weapons } from '@/components/GameCanvas/GameCanvas.const';
 import type { Skin, Tile } from '@/components/GameCanvas/GameCanvas.types';
 import { getRandomRarity } from './getRandomRarity';
-import { preloadImages } from './imageCache';
+import { preloadImagesSync } from './imageCache';
 
 export const skins: Skin[] =
   weapons?.map((name, index) => ({
@@ -11,7 +11,7 @@ export const skins: Skin[] =
     rarity: getRandomRarity(),
   })) ?? [];
 
-preloadImages(skins.map((skin) => skin.imagePath));
+preloadImagesSync(skins.map((skin) => skin.imagePath));
 
 function xmur3(str: string): () => number {
   let h = 1779033703 ^ str.length;

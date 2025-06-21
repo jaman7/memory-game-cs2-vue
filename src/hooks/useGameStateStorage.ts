@@ -8,11 +8,15 @@ export function useGameStateStorage() {
 
   function save(state: GameState) {
     gameState.value = {
+      dateStart: state.dateStart ?? new Date().toISOString(),
       tiles: state.tiles,
       elapsedSeconds: state.elapsedSeconds,
       moves: state.moves,
       seed: state.seed,
       difficulty: state.difficulty,
+      matchedPairs: state?.matchedPairs ?? [],
+      matchCount: state?.matchCount ?? 0,
+      mismatchCount: state?.mismatchCount ?? 0,
     };
   }
   function load(): GameState | null {

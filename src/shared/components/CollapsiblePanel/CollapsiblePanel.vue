@@ -1,7 +1,7 @@
 <template>
-  <div class="collapsible-panel">
-    <Button class="collapsible-header" :handleClick="() => (isOpen = !isOpen)">
-      <span>{{ title }}</span>
+  <div class="collapsible" :class="props?.size ?? 'sm'">
+    <Button className="collapsible-header" :size="props?.size ?? 'sm'" :handleClick="() => (isOpen = !isOpen)">
+      <span>{{ props?.title ?? '' }}</span>
       <VIcon name="fa-chevron-down" :class="{ rotated: isOpen }" class="arrow-icon" />
     </Button>
 
@@ -15,9 +15,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import type { ICollapsiblePanel } from './CollapsiblePanel.model';
+import './CollapsiblePanel.scss';
 
-const props = defineProps<{ title: string }>();
+const props = defineProps<ICollapsiblePanel>();
 const isOpen = ref(false);
 </script>
-
-<style scoped src="./CollapsiblePanel.scss" />

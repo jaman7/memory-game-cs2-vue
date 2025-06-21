@@ -1,4 +1,4 @@
-# Memory Game – Vue 3 + TypeScript
+# Memory Game CS2 – Vue 3 + TypeScript
 
 An interactive memory game featuring weapon graphics from Counter-Strike 2.
 

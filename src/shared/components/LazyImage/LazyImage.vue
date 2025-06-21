@@ -1,21 +1,20 @@
 <template>
-  <div>
-    <div v-if="!loaded" class="lazy-placeholder" data-testid="lazy-placeholder" aria-hidden="true" />
-    <img
-      :id="id"
-      loading="lazy"
-      :src="error || !src ? defaultLogo : src"
-      :alt="alt"
-      ref="imgRef"
-      :class="['img-fluid', className, loaded ? 'lazyloaded' : 'lazyloading']"
-      @load="onLoad"
-      @error="onError"
-      @click="onClick"
-    />
-  </div>
+  <div v-if="!loaded" class="lazy-placeholder" data-testid="lazy-placeholder" aria-hidden="true" />
+  <img
+    :id="id"
+    loading="lazy"
+    :src="error || !src ? defaultLogo : src"
+    :alt="alt"
+    ref="imgRef"
+    :class="clsx('img-fluid', className ?? '', { lazyloaded: loaded, lazyloading: !loaded })"
+    @load="onLoad"
+    @error="onError"
+    @click="onClick"
+  />
 </template>
 
 <script setup lang="ts">
+import { clsx } from 'clsx';
 import { onMounted, onUnmounted, ref } from 'vue';
 
 defineProps<{

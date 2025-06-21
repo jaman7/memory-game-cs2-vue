@@ -1,17 +1,20 @@
 import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
 import { ref, type Ref } from 'vue';
+import { useThrottledDraw } from './useThrottledDraw';
 
 export function useMouseTileHover(
   canvasRef: Ref<HTMLCanvasElement | null>,
   tiles: Ref<Tile[]>,
   tileSize: Ref<number>,
-  getMousePosition: (e: MouseEvent) => { x: number; y: number }
+  getMousePosition: (e: MouseEvent | TouchEvent) => { x: number; y: number }
 ) {
   const hoveredTileId = ref<number | null>(null);
   const mouseX = ref(0);
   const mouseY = ref(0);
 
-  function handleMouseMove(e: MouseEvent) {
+  const { triggerDraw } = useThrottledDraw(canvasRef, tiles, mouseX, mouseY, hoveredTileId, tileSize);
+
+  function handleMouseMove(e: MouseEvent | TouchEvent) {
     const { x, y } = getMousePosition(e);
     mouseX.value = x;
     mouseY.value = y;
@@ -25,6 +28,8 @@ export function useMouseTileHover(
     if (canvasRef.value) {
       canvasRef.value.style.cursor = hoveredTileId.value !== null ? 'pointer' : 'default';
     }
+
+    triggerDraw();
   }
 
   return {

@@ -1,0 +1,65 @@
+@import '@scss/extend';
+
+.sidebar-last-match {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: var(--main-bg-dark);
+  font-size: 0.875rem;
+
+  @extend %shared-box-shadow;
+
+  &.match {
+    border-left: 4px solid var(--main-bg-green);
+  }
+
+  &.mismatch {
+    border-left: 4px solid var(--main-bg-red);
+  }
+
+  & .label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+
+    &.match {
+      color: var(--main-text-green);
+    }
+
+    &.mismatch {
+      color: var(--main-text-red);
+    }
+  }
+
+  & .tiles {
+    display: flex;
+    gap: 0.5rem;
+
+    & .tile-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      & img {
+        max-height: 95px;
+        border-radius: 0.5rem;
+
+        &.match {
+          border: 2px solid var(--main-bg-green) !important;
+        }
+
+        &.mismatch {
+          border: 2px solid var(--main-bg-red) !important;
+        }
+      }
+
+      & .name {
+        font-size: 0.75rem;
+        text-align: center;
+        white-space: nowrap;
+        font-weight: 600;
+        color: var(--main-text-blue);
+      }
+    }
+  }
+}

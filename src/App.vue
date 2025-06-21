@@ -1,8 +1,8 @@
 <template>
   <div class="layout">
-    <Spinner v-if="isLoading" size="large" ariaLabel="Ładowanie grafik..." />
-    <StartModal v-else-if="!gameStore.gameStarted && !gameStore.gameOver" :key="'gamenew'" @start="handleStart" />
-    <GameCanvas v-else :seed="gameStore.seed" :key="'gamecanvas'" :difficulty="gameStore.difficulty" @newGame="handleStartModal" />
+    <Spinner v-if="isLoading" key="loading" size="large" ariaLabel="Loadnig.." />
+    <StartModal v-else-if="!gameStore.gameStarted" key="start" @start="handleStart" />
+    <GameCanvas v-else key="canvas" :seed="gameStore.seed" :difficulty="gameStore.difficulty" @newGame="handleStartModal" />
     <transition name="fade-panel">
       <DevPanel v-if="gameStore.devPanelVisible" />
     </transition>
@@ -30,7 +30,7 @@ async function handleStart(payload: { seed: string; difficulty: number }) {
 
 async function handleStartModal(e: string) {
   gameStore.setGameStarted(false);
-  if (gameStore.gameOver) gameStore.setGameOver(false);
+  gameStore.setGameOver(false);
 }
 
 onMounted(() => {

@@ -1,34 +1,33 @@
 @import '@scss/extend';
 
 .collapsible {
-  &-panel {
-    border: 1px solid var(--main-border-gray);
-    border-radius: 0.5rem;
-    overflow: hidden;
-    background-color: var(--main-bg-white);
+  border: 1px solid var(--main-border-gray);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: var(--main-bg-white);
 
-    @extend %shared-box-shadow;
+  @extend %shared-box-shadow;
 
-    & .arrow-icon {
-      width: 1rem;
-      height: 1rem;
-      transition: transform 0.3s ease;
-    }
+  & .arrow-icon {
+    width: 1rem;
+    height: 1rem;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
 
-    & .arrow-icon.rotated {
+    &.rotated {
       transform: rotate(180deg);
     }
+  }
 
-    & .fade-enter-active,
-    & .fade-leave-active {
-      transition: all 0.3s ease;
-    }
+  & .fade-enter-active,
+  & .fade-leave-active {
+    transition: all 0.3s ease;
+  }
 
-    & .fade-enter-from,
-    & .fade-leave-to {
-      opacity: 0;
-      transform: scaleY(0.95);
-    }
+  & .fade-enter-from,
+  & .fade-leave-to {
+    opacity: 0;
+    transform: scaleY(0.95);
   }
 
   &-header {
@@ -36,7 +35,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-md);
     font-weight: 500;
     font-size: 1rem;
     color: var(--main-text-primary);
@@ -50,5 +48,23 @@
     padding: var(--spacing-md);
     background-color: var(--main-bg-white);
     color: var(--main-text-primary);
+  }
+
+  &.xs {
+    & .collapsible-header {
+      padding: 4px;
+    }
+  }
+
+  &.sm {
+    & .collapsible-header {
+      padding: 8px;
+    }
+  }
+
+  &.lg {
+    & .collapsible-header {
+      padding: 12px;
+    }
   }
 }

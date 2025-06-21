@@ -28,25 +28,59 @@
   "sidebar": {
     "title": "Game panel",
     "time": "Time:",
+    "dateStart": "Date start:",
     "moves": "Movements:",
     "seed": "Seed:",
     "difficulty": "Level:",
+    "matchCount": "Matched Count:",
+    "mismatchCount": "Mismatched Count:",
     "buttonReplay": "Restarting the game",
-    "buttonNew": "New game"
+    "buttonNew": "New game",
+    "buttonDevTools": "Dev Tools",
+    "statsTitle": "Global Statistics",
+    "gamesPlayed": "Games played",
+    "avgTime": "Average time",
+    "avgMoves": "Average number of moves",
+    "totalMatches": "Total matches",
+    "totalMismatches": "Total mismatches",
+    "matches": {
+      "match": "Match",
+      "mismatch": "Mismatch"
+    }
+  },
+  "rarityLegend": {
+    "title": "Legend",
+    "consumer": "Consumer",
+    "industrial": "Industrial",
+    "milspec": "Milspec",
+    "restricted": "Restricted",
+    "classified": "Classified",
+    "covert": "Covert"
   },
   "history": {
     "title": "Game History",
     "timeMoves": "{time}s {moves} moves",
+    "matchedCount": " Matched: {matchCount} Mismatch: {mismatchCount}",
+    "matchedMismatch": "Match/Mismatch History",
     "error": "No results saved."
   },
   "errors": {
     "canvasFallBack": "Your browser does not support the canvas element."
+  },
+  "volumeControl": {
+    "title": "Volume"
   },
   "devToolPanel": {
     "title": "Dev Tool Panel",
     "history": "Game history",
     "btnSave": "Save",
     "btnReset": "Reset",
-    "moves": "Moves"
+    "moves": "Moves",
+    "matchHistory": {
+      "title": "Match/Mismatch History",
+      "empty": "No entries",
+      "match": "Match",
+      "mismatch": "Mismatch"
+    }
   }
 }

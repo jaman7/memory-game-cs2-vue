@@ -22,6 +22,4 @@ defineEmits<{
   (e: 'restart'): void;
   (e: 'newgame'): void;
 }>();
-
-console.log(props.time, props.moves);
 </script>

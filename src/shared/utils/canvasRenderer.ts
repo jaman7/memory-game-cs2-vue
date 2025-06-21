@@ -39,7 +39,7 @@ function drawTileFrame(ctx: CanvasRenderingContext2D, tile: Tile, tileWidth: num
     ctx.strokeStyle = baseColor;
   }
 
-  ctx.lineWidth = isHovered ? 8 : 6;
+  ctx.lineWidth = isHovered ? 8 : 5;
   drawRoundedRect(ctx, tile.x + 1, tile.y + 1, tileWidth - 2, tileHeight - 2, 10);
   ctx.stroke();
 }
@@ -94,8 +94,10 @@ export function drawBoard(
   tiles: Tile[],
   mouse: { x: number; y: number },
   hoveredId: number | null,
-  tileSize = 100
+  tileSize = 100,
+  fadeStartTime?: Ref<number | null>
 ) {
+  const now = Date.now();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = colors.lightGray;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -105,7 +107,15 @@ export function drawBoard(
     const centerY = tile.y + tileSize / 2;
     const isHovered = hoveredId === tile.id;
 
+    let alpha = 1;
+    if (fadeStartTime?.value) {
+      const elapsed = now - fadeStartTime.value;
+      const fadeInDuration = 600; // ms
+      alpha = Math.min(1, elapsed / fadeInDuration);
+    }
+
     ctx.save();
+    ctx.globalAlpha = alpha;
     ctx.translate(centerX, centerY);
     ctx.translate(-centerX, -centerY);
 

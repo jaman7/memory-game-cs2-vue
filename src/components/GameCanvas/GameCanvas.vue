@@ -1,6 +1,6 @@
 <template>
   <div class="game-canvas">
-    <div class="game-content">
+    <div class="game-content" :class="{ 'with-sidebar': gameStore.sidebarVisible }">
       <div class="game-info">{{ formattedTime }} | {{ $t('game.moves', { n: gameStore.moves }) }}</div>
 
       <canvas ref="canvasRef" class="game-canvas-element" role="img" :aria-label="$t('game.canvasLabel')" :style="{ height: 'auto' }">
@@ -24,6 +24,7 @@
 import { useBeforeUnloadBackup } from '@/hooks/useBeforeUnloadBackup';
 import { useCanvasLayout } from '@/hooks/useCanvasLayout';
 import { useCanvasRenderer } from '@/hooks/useCanvasRenderer';
+import { useDebouncedRedraw } from '@/hooks/useDebouncedRedraw';
 import { useFormattedTime } from '@/hooks/useFormattedTime';
 import { useGamePersistence } from '@/hooks/useGamePersistence';
 import { useMouseCanvasPosition } from '@/hooks/useMouseCanvasPosition';
@@ -31,6 +32,7 @@ import { useMouseTileHover } from '@/hooks/useMouseTileHover';
 import { useResizeObserver } from '@/hooks/useResizeObserver';
 import { useTileInteractions } from '@/hooks/useTileInteractions';
 import { useTimer } from '@/hooks/useTimer';
+import { sounds } from '@/shared/sounds/sounds';
 import { throttle } from '@/shared/utils/throttle';
 import { useGameHistoryStore } from '@/stores/useGameHistoryStore';
 import { useGameStore } from '@/stores/useGameStore';
@@ -48,6 +50,7 @@ const historyStore = useGameHistoryStore();
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const parentElement = ref<HTMLElement | null>(null);
 const currentTileSize = ref(100);
+const fadeStartTime = ref<number | null>(null);
 const tiles = computed(() => gameStore.tiles);
 
 const { saveState, loadState, clearState } = useGamePersistence(gameStore.seed, gameStore.difficulty);
@@ -62,11 +65,15 @@ const formattedTime = useFormattedTime(elapsed);
 
 function recordVictoryStats() {
   historyStore.addEntry({
+    dateStart: gameStore.dateStart ?? new Date().toISOString(),
     time: gameStore.elapsed,
     moves: gameStore.moves,
-    date: new Date().toISOString(),
+    dateEnd: new Date().toISOString(),
     seed: gameStore.seed,
     difficulty: gameStore.difficulty,
+    matchCount: gameStore.matchCount,
+    mismatchCount: gameStore.mismatchCount,
+    matchedPairs: gameStore.matchedPairs,
   });
 }
 
@@ -84,36 +91,57 @@ const { handleClick, resetInteractions, isGameOver } = useTileInteractions(
   mouseX,
   mouseY,
   hoveredTileId,
-  () => {
-    recordVictoryStats();
-    stop();
-    gameStore.setGameOver(true);
-    saveState(gameStore.gameState);
+  {
+    onGameOver: () => {
+      recordVictoryStats();
+      stop();
+      gameStore.setGameOver(true);
+      saveState(gameStore.gameState);
+    },
+    // onMatch: (a, b) => {
+    //   console.log('Matched:', a.name);
+    // },
+    // onMismatch: (a, b) => {
+    //   console.log('Mismatch:', a.name, b.name, a, b);
+    // },
   },
   currentTileSize
 );
 
 const { applyTileLayout } = useCanvasLayout(canvasRef, tiles, currentTileSize);
 
-const { startAnimationLoop, layoutAndRedraw } = useCanvasRenderer(canvasRef, tiles, mouseX, mouseY, hoveredTileId, currentTileSize, applyTileLayout);
+const { startAnimationLoop, layoutAndRedraw } = useCanvasRenderer(
+  canvasRef,
+  tiles,
+  mouseX,
+  mouseY,
+  hoveredTileId,
+  currentTileSize,
+  applyTileLayout,
+  fadeStartTime
+);
+
+const { debouncedRedraw } = useDebouncedRedraw(layoutAndRedraw, 100);
 
 function restartGame() {
+  fadeStartTime.value = Date.now();
   gameStore.restartGame();
   gameStore.setGameOver(false);
   gameStore.setGameStarted(true);
   resetInteractions();
-  layoutAndRedraw();
+  debouncedRedraw();
   clearState();
   reset();
   start();
 }
 
-useResizeObserver(parentElement, () => layoutAndRedraw());
+useResizeObserver(parentElement, () => debouncedRedraw());
 
 onMounted(async () => {
   if (!canvasRef.value) return;
   useBeforeUnloadBackup();
   const saved = loadState();
+  Object.values(sounds).forEach((s) => s.load());
 
   if (saved) {
     gameStore.restoreGame(saved);
@@ -121,10 +149,14 @@ onMounted(async () => {
 
   resetInteractions();
   await nextTick();
+  fadeStartTime.value = Date.now();
   layoutAndRedraw();
 
   canvasRef.value?.addEventListener('click', handleClick);
   window.addEventListener('mousemove', handleMouseMove);
+  canvasRef.value?.addEventListener('touchstart', handleMouseMove, { passive: true });
+  canvasRef.value?.addEventListener('touchmove', handleMouseMove, { passive: true });
+  canvasRef.value?.addEventListener('touchend', handleClick);
 
   startAnimationLoop();
 
@@ -137,6 +169,10 @@ onUnmounted(() => {
   stop();
   window.removeEventListener('mousemove', handleMouseMove);
   canvasRef.value?.removeEventListener('click', handleClick);
+
+  canvasRef.value?.removeEventListener('touchstart', handleMouseMove);
+  canvasRef.value?.removeEventListener('touchmove', handleMouseMove);
+  canvasRef.value?.removeEventListener('touchend', handleClick);
 });
 </script>
 

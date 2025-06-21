@@ -1,26 +1,22 @@
 import { sounds } from '@/shared/sounds/sounds';
 
 export function useSoundEffects() {
-  function playFlip() {
-    sounds.flip?.play?.();
-  }
-
-  function playMatch() {
-    sounds.match?.play?.();
-  }
-
-  function playFail() {
-    sounds.fail?.play?.();
-  }
-
-  function playWin() {
-    sounds.win?.play?.();
-  }
-
   return {
-    playFlip,
-    playMatch,
-    playFail,
-    playWin,
+    playFlip: () => {
+      sounds.flip.play();
+      return Promise.resolve();
+    },
+    playMatch: () => {
+      sounds.match.play();
+      return Promise.resolve();
+    },
+    playFail: () => {
+      sounds.fail.play();
+      return Promise.resolve();
+    },
+    playWin: () => {
+      sounds.win.play();
+      return Promise.resolve();
+    },
   };
 }
