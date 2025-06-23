@@ -19,8 +19,11 @@
 
 <script setup lang="ts">
 import { useGameStore } from '@/stores/useGameStore';
-import './Matches.scss';
+import './SidebarMatches.scss';
 
 const gameStore = useGameStore();
-const lastMatch = computed(() => gameStore.matchedPairs?.[gameStore?.matchedPairs?.length - 1] ?? null);
+const lastMatch = computed(() => {
+  const matches = gameStore.matchedPairs;
+  return matches.length ? matches[matches.length - 1] : null;
+});
 </script>

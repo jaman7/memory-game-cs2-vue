@@ -1,0 +1,149 @@
+@import '@scss/extend';
+
+@keyframes halo-spin {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@mixin halo-border($color) {
+  position: relative;
+  z-index: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background: linear-gradient(90deg, $color, white, $color);
+    background-size: 200% 200%;
+    animation: halo-spin 1s linear infinite;
+    z-index: 2;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    mask-composite: xor;
+    padding: 6px;
+  }
+}
+
+.demo {
+  &-container {
+    min-height: 100vh;
+    max-height: 100vh;
+    width: 100%;
+    background-color: var(--main-bg-gray);
+    display: flex;
+    overflow-y: hidden;
+  }
+
+  &-game {
+    display: grid;
+    grid-template-columns: repeat(6, 100px);
+    gap: 8px;
+    padding: 16px;
+    transform-origin: top center;
+    transition: transform 0.2s ease;
+    width: 100%;
+    height: 100%;
+
+    & .tile {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1;
+      perspective: 10000px;
+      position: relative;
+
+      & > .tile-back,
+      & > .tile-front {
+        border-radius: 8px;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+      }
+
+      & > .tile-back {
+        transition: all 300ms ease-in-out;
+      }
+
+      & > .tile-front {
+        transition: all 500ms ease-in-out;
+      }
+
+      & .tile-front {
+        padding: 8px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: rotateY(180deg);
+      }
+
+      & .tile-back {
+        width: 100%;
+        height: 100%;
+        background-color: var(--main-bg-blue);
+        transform: rotateY(0deg);
+      }
+
+      &.flipped .tile-front {
+        transform: rotateY(0deg);
+      }
+
+      &.flipped .tile-back {
+        transform: rotateY(-180deg);
+      }
+
+      & .tile-name {
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        color: var(--main-text-white);
+        font-size: 1.25rem;
+        font-weight: 500;
+
+        @extend %text-shadow;
+      }
+    }
+  }
+}
+
+$rarity-colors: (
+  consumer: #999,
+  industrial: #5a9bd4,
+  milspec: #4b6cb7,
+  restricted: #cf6ccf,
+  classified: #f55,
+  covert: #f2b01e,
+);
+$dark-blue: #0860d8;
+
+.tile.flipped,
+.tile.matched {
+  @each $rarity, $color in $rarity-colors {
+    & .rarity-#{$rarity} {
+      background: linear-gradient(135deg, #{$color}, #{$dark-blue});
+    }
+  }
+}
+
+.tile.matched {
+  @each $rarity, $color in $rarity-colors {
+    & .rarity-border-#{$rarity} {
+      background: linear-gradient(90deg, #{$color}, #{$dark-blue});
+
+      @include halo-border($color);
+    }
+  }
+}

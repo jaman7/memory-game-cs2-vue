@@ -1,0 +1,22 @@
+.sidebar-rarity-legend-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+
+  & .legend {
+    &-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.875rem;
+    }
+
+    &-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+  }
+}

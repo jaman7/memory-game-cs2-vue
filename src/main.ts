@@ -14,10 +14,13 @@ app.component('VIcon', OhVueIcon);
 
 async function loadLocale(locale: string) {
   if (!availableLocales.includes(locale)) return;
-
-  const messages = await fetch(`/i18n/${locale}.json`).then((res) => res.json());
-  i18n.global.setLocaleMessage(locale, messages);
-  i18n.global.locale.value = locale;
+  try {
+    const messages = await fetch(`/i18n/${locale}.json`).then((res) => res.json());
+    i18n.global.setLocaleMessage(locale, messages);
+    i18n.global.locale.value = locale;
+  } catch (err) {
+    console.warn(`Failed to load locale: ${locale}`, err);
+  }
 }
 
 let initialLocale = localStorage.getItem('user-locale');

@@ -1,0 +1,15 @@
+.locale-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  & .active {
+    background-color: var(--main-bg-silver-haze) !important;
+  }
+
+  & .flag {
+    max-height: 14px;
+    border-radius: 4px;
+  }
+}

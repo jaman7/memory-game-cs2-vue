@@ -10,6 +10,7 @@
     "lib": [],
     "types": [
       "vitest",
+      "vitest/globals",
       "node",
       "jsdom"
     ]

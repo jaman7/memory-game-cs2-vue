@@ -10,10 +10,13 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: 'jsdom',
-      exclude: [...configDefaults.exclude, 'e2e/**'],
+      exclude: [...configDefaults.exclude, 'e2e/**', 'dist/**'],
       root: __dirname,
       setupFiles: ['./vitest.setup.ts'],
       globals: true,
+      deps: {
+        inline: ['vitest-canvas-mock'],
+      },
       coverage: {
         provider: 'v8',
         reporter: ['text', 'json', 'html'],

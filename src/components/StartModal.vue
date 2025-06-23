@@ -1,34 +1,32 @@
 <template>
   <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-content">
-      <h2 class="modal-title mb-2">{{ $t('modalStart.title') }}</h2>
+    <h2 class="modal-title mb-2">{{ $t('modalStart.title') }}</h2>
 
-      <p class="modal-info">
-        {{ $t('modalStart.noActiveGameInfo') }}
-      </p>
+    <p class="modal-info">
+      {{ $t('modalStart.noActiveGameInfo') }}
+    </p>
 
-      <InputField
-        id="seed"
-        v-model="localSeed"
-        :label="$t('modalStart.seedLabel')"
-        :placeholder="'np. awp-king'"
-        :description="$t('modalStart.seed')"
-        describedby="seed-desc"
-      />
+    <InputField
+      id="seed"
+      v-model="localSeed"
+      :label="$t('modalStart.seedLabel')"
+      :placeholder="'np. awp-king'"
+      :description="$t('modalStart.seed')"
+      describedby="seed-desc"
+    />
 
-      <SelectField
-        id="difficulty"
-        v-model="localDifficulty"
-        :label="$t('modalStart.difficultyLabel')"
-        :description="$t('modalStart.difficulty')"
-        describedby="difficulty-desc"
-        :options="difficulties"
-      />
-      <p id="difficulty-desc" class="sr-only mb-2">{{ $t('modalStart.difficulty') }}</p>
+    <SelectField
+      id="difficulty"
+      v-model="localDifficulty"
+      :label="$t('modalStart.difficultyLabel')"
+      :description="$t('modalStart.difficulty')"
+      describedby="difficulty-desc"
+      :options="difficulties"
+    />
+    <p id="difficulty-desc" class="sr-only mb-2">{{ $t('modalStart.difficulty') }}</p>
 
-      <div class="modal-actions">
-        <Button name="modalStart.button" :handleClick="startGame" />
-      </div>
+    <div class="modal-actions">
+      <Button name="modalStart.button" :handleClick="startGame" />
     </div>
   </div>
 </template>

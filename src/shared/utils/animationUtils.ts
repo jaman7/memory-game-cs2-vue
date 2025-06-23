@@ -20,6 +20,7 @@ export function animateFlip(tile: Tile, canvas: HTMLCanvasElement, size = 100, o
       if (++frame <= frames) {
         requestAnimationFrame(step);
       } else {
+        h;
         resolve();
       }
     }

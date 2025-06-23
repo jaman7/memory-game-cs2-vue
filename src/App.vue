@@ -1,12 +1,16 @@
 <template>
   <div class="layout">
-    <Spinner v-if="isLoading" key="loading" size="large" ariaLabel="Loadnig.." />
-    <StartModal v-else-if="!gameStore.gameStarted" key="start" @start="handleStart" />
-    <GameCanvas v-else key="canvas" :seed="gameStore.seed" :difficulty="gameStore.difficulty" @newGame="handleStartModal" />
+    <Spinner v-if="isLoading" key="loading" size="large" ariaLabel="Loading..." />
+    <GameCanvas v-if="gameStore.gameStarted" key="canvas" :seed="gameStore.seed" :difficulty="gameStore.difficulty" @newGame="handleStartModal" />
+    <GameCanvasDemo v-if="!gameStore.gameStarted && !isLoading" class="preview-bg" />
+  </div>
+
+  <Teleport to="body">
+    <transition name="fade-panel"> <StartModal v-if="!gameStore.gameStarted && !isLoading" key="start" @start="handleStart" /></transition>
     <transition name="fade-panel">
       <DevPanel v-if="gameStore.devPanelVisible" />
     </transition>
-  </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -28,7 +32,7 @@ async function handleStart(payload: { seed: string; difficulty: number }) {
   gameStore.startGame(result);
 }
 
-async function handleStartModal(e: string) {
+async function handleStartModal() {
   gameStore.setGameStarted(false);
   gameStore.setGameOver(false);
 }

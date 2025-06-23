@@ -38,6 +38,9 @@ export default defineConfigWithVueTs(
       'jsx-a11y/lang': 'warn',
       'jsx-a11y/no-autofocus': 'warn',
       'jsx-a11y/alt-text': 'warn',
+      'no-console': 'warn',
+      quotes: ['error', 'single'],
+      semi: ['error', 'always'],
     },
   },
 

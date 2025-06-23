@@ -55,4 +55,4 @@ function onVolumeChange() {
 }
 </script>
 
-<style scoped src="./VolumeControl.scss" />
+<style scoped src="./SidebarVolumeControl.scss" />

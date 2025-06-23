@@ -7,13 +7,17 @@
         {{ $t('errors.canvasFallBack') }}
       </canvas>
 
-      <GameOverModal
-        v-if="gameStore?.gameOver ?? false"
-        :time="formattedTime ?? ''"
-        :moves="gameStore.moves ?? 0"
-        @restart="restartGame"
-        @newgame="goToStart"
-      />
+      <Teleport to="body">
+        <transition name="fade-panel">
+          <GameOverModal
+            v-if="gameStore?.gameOver ?? false"
+            :time="formattedTime ?? ''"
+            :moves="gameStore.moves ?? 0"
+            @restart="restartGame"
+            @newgame="goToStart"
+          />
+        </transition>
+      </Teleport>
     </div>
 
     <Sidebar @restart="restartGame" @newGame="goToStart" />
@@ -98,12 +102,6 @@ const { handleClick, resetInteractions, isGameOver } = useTileInteractions(
       gameStore.setGameOver(true);
       saveState(gameStore.gameState);
     },
-    // onMatch: (a, b) => {
-    //   console.log('Matched:', a.name);
-    // },
-    // onMismatch: (a, b) => {
-    //   console.log('Mismatch:', a.name, b.name, a, b);
-    // },
   },
   currentTileSize
 );
