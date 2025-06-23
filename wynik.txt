@@ -1,0 +1,4491 @@
+.lintstagedrc
+{
+  '{,src/**/}*.{md,json,ts,tsx,js,jsx,vue,css,scss,html,yml,vue}': ['git add']
+}
+
+
+.node-version
+20
+
+.prettierrc.json
+{
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "printWidth": 160,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "useEditorConfig": true
+}
+
+env.d.ts
+/// <reference types="vue/macros-global" />
+/// <reference types="vite/client" />
+/// <reference types="vitest" />
+
+declare module '*.vue' {
+  import { DefineComponent } from 'vue';
+  const component: DefineComponent<{}, {}, any>;
+  export default component;
+}
+
+
+eslint.config.ts
+import pluginVitest from '@vitest/eslint-plugin';
+import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
+import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import pluginVue from 'eslint-plugin-vue';
+import { globalIgnores } from 'eslint/config';
+import vueParser from 'vue-eslint-parser';
+
+export default defineConfigWithVueTs(
+  {
+    name: 'app/files-to-lint',
+    files: ['**/*.{ts,mts,tsx,vue}'],
+    languageOptions: {
+      parser: vueParser,
+      parserOptions: {
+        parser: '@typescript-eslint/parser',
+        ecmaVersion: 2020,
+        sourceType: 'module',
+      },
+    },
+  },
+
+  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+
+  pluginVue.configs['flat/recommended'],
+  pluginVue.configs['flat/strongly-recommended'],
+  vueTsConfigs.recommended,
+
+  {
+    ...pluginVitest.configs.recommended,
+    files: ['**/__tests__/**/*', '**/*.spec.*', '**/*.test.*'],
+    plugins: {
+      'jsx-a11y': jsxA11y,
+    },
+    rules: {
+      'vue/no-parsing-error': 'error',
+      'jsx-a11y/aria-role': 'warn',
+      'jsx-a11y/lang': 'warn',
+      'jsx-a11y/no-autofocus': 'warn',
+      'jsx-a11y/alt-text': 'warn',
+      'no-console': 'warn',
+      quotes: ['error', 'single'],
+      semi: ['error', 'always'],
+    },
+  },
+
+  skipFormatting
+);
+
+
+index.html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory CS2 – Memory game</title>
+    <meta name="description" content="Play Memory CS2 and test your memory with Counter-Strike 2 weapons!" />
+    <meta name="theme-color" content="#1f2937" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
+
+
+package.json
+{
+  "name": "vue-memory-game-cs2",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "lint": "eslint . --fix",
+    "format": "prettier --write src/",
+    "prepare": "husky install",
+    "test:unit": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "coverage": "vitest run --coverage",
+    "testreport": "vitest run --coverage.enabled=true --coverage.reporter=html --coverage.reportsDirectory=coverage",
+    "posttestreport": "node fix-coverage-paths.cjs"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": "eslint --fix",
+    "*.{js,ts,vue,css,scss,html,json,md}": "prettier --write"
+  },
+  "dependencies": {
+    "@vueuse/core": "^13.2.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "howler": "^2.2.4",
+    "oh-vue-icons": "^1.0.0-rc3",
+    "pinia": "^3.0.3",
+    "seedrandom": "^3.0.5",
+    "vue": "^3.5.13",
+    "vue-i18n": "^11.1.5"
+  },
+  "devDependencies": {
+    "@pinia/testing": "^1.0.2",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@tsconfig/node22": "^22.0.1",
+    "@types/eslint-plugin-jsx-a11y": "^6.10.0",
+    "@types/howler": "^2.2.12",
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^22.14.0",
+    "@types/seedrandom": "^3.0.8",
+    "@typescript-eslint/parser": "^8.34.1",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "@vitejs/plugin-vue-jsx": "^4.1.2",
+    "@vitest/coverage-v8": "^3.1.3",
+    "@vitest/eslint-plugin": "^1.1.39",
+    "@vitest/ui": "^3.1.3",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.5.0",
+    "@vue/test-utils": "^2.4.6",
+    "@vue/tsconfig": "^0.7.0",
+    "eslint": "^9.22.0",
+    "eslint-import-resolver-typescript": "^4.3.4",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-vue": "~10.0.0",
+    "fast-glob": "^3.3.3",
+    "husky": "^9.1.7",
+    "jiti": "^2.4.2",
+    "jsdom": "^26.0.0",
+    "lint-staged": "^16.0.0",
+    "npm-run-all2": "^7.0.2",
+    "postcss": "^8.5.3",
+    "prettier": "3.5.3",
+    "rollup-plugin-visualizer": "^6.0.3",
+    "sass": "^1.89.0",
+    "stylelint": "^16.19.1",
+    "stylelint-config-recommended": "^16.0.0",
+    "stylelint-config-standard-scss": "^15.0.0",
+    "stylelint-order": "^7.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.8.0",
+    "unplugin-auto-import": "^19.2.0",
+    "unplugin-vue-components": "^28.5.0",
+    "vite": "^6.2.4",
+    "vite-plugin-inspect": "^11.2.0",
+    "vite-plugin-vue-devtools": "^7.7.2",
+    "vitest": "^3.1.3",
+    "vitest-canvas-mock": "^0.3.3",
+    "vue-eslint-parser": "^10.1.3",
+    "vue-tsc": "^2.2.8"
+  },
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "stylelint.vscode-stylelint",
+    "yoavbls.pretty-ts-errors"
+  ],
+  "browserslist": [
+    "last 5 Chrome versions",
+    "last 15 Firefox versions",
+    "last 4 Edge major versions",
+    "last 4 Safari major versions",
+    "last 2 iOS major versions",
+    "Firefox ESR",
+    "not ios_saf 15.2-15.3",
+    "not safari 15.2-15.3"
+  ]
+}
+
+
+tsconfig.app.json
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": [
+    "env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.vue",
+    "src/**/*.test.ts"
+  ],
+  "exclude": [
+    "src/**/__tests__/*"
+  ],
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "types": [
+      "node",
+      "vitest"
+    ]
+  }
+}
+
+
+tsconfig.json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@scss/*": [
+        "src/assests/scss/*"
+      ]
+    }
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.vitest.json"
+    }
+  ]
+}
+
+tsconfig.node.json
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "include": [
+    "vite.config.*",
+    "vitest.config.*",
+    "cypress.config.*",
+    "nightwatch.conf.*",
+    "playwright.config.*",
+    "eslint.config.*"
+  ],
+  "compilerOptions": {
+    "noEmit": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": [
+      "node",
+      "vitest"
+    ]
+  }
+}
+
+
+tsconfig.vitest.json
+{
+  "extends": "./tsconfig.app.json",
+  "include": [
+    "src/**/__tests__/*",
+    "env.d.ts"
+  ],
+  "exclude": [],
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vitest.tsbuildinfo",
+    "lib": [],
+    "types": [
+      "vitest",
+      "vitest/globals",
+      "node",
+      "jsdom"
+    ]
+  }
+}
+
+
+vite.config.ts
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
+import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
+import AutoImport from 'unplugin-auto-import/vite';
+import { VueUseComponentsResolver } from 'unplugin-vue-components/resolvers'; // opcjonalne
+import Components from 'unplugin-vue-components/vite';
+import { defineConfig } from 'vite';
+import vueDevTools from 'vite-plugin-vue-devtools';
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [
+    vue(),
+    vueJsx(),
+    vueDevTools(),
+    AutoImport({
+      imports: ['vue', 'vue-router', '@vueuse/core'],
+      dts: 'src/auto-imports.d.ts',
+      vueTemplate: true,
+    }),
+    Components({
+      dirs: ['src/components', 'src/shared/components'],
+      extensions: ['vue'],
+      deep: true,
+      dts: 'src/components.d.ts',
+      resolvers: [VueUseComponentsResolver()],
+      exclude: [],
+    }),
+    visualizer({
+      filename: 'dist/report.html',
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@hooks': path.resolve(__dirname, './src/hooks'),
+      '@utils': path.resolve(__dirname, './src/shared/utils'),
+      '@scss': path.resolve(__dirname, './src/assests/scss'),
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        quietDeps: true,
+        api: 'modern-compiler',
+        silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import'],
+        additionalData: `@use "@scss/mixins.scss"; @use "@scss/variables.scss";`,
+      },
+    },
+    devSourcemap: true,
+  },
+  optimizeDeps: {
+    include: ['pinia', 'howler', '@vueuse/core'],
+  },
+  build: {
+    target: 'esnext',
+    chunkSizeWarningLimit: 700,
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vue: ['vue', 'pinia', 'vue-i18n', '@vueuse/core'],
+          vendor: ['howler', 'clsx', 'oh-vue-icons'],
+          canvas: [
+            '@/hooks/useCanvasRenderer',
+            '@/hooks/useMouseCanvasPosition',
+            '@/hooks/useMouseTileHover',
+            '@/hooks/useThrottledDraw',
+            '@/shared/utils/canvasRenderer',
+          ],
+          game: ['@/hooks/useTileInteractions', '@/hooks/useGamePersistence', '@/stores/useGameStore', '@/stores/useGameHistoryStore'],
+          ui: ['@/components/Sidebar/Sidebar.vue', '@/components/DevPanel/DevPanel.vue', '@/components/GameOverModal.vue', '@/components/StartModal.vue'],
+        },
+      },
+    },
+  },
+  define: {
+    'process.env': {},
+  },
+  worker: {
+    format: 'es',
+  },
+});
+
+
+vitest.config.ts
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { configDefaults, defineConfig, mergeConfig } from 'vitest/config';
+import viteConfig from './vite.config';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default mergeConfig(
+  viteConfig,
+  defineConfig({
+    test: {
+      environment: 'jsdom',
+      exclude: [...configDefaults.exclude, 'e2e/**', 'dist/**'],
+      root: __dirname,
+      setupFiles: ['./vitest.setup.ts'],
+      globals: true,
+      deps: {
+        inline: ['vitest-canvas-mock'],
+      },
+      coverage: {
+        provider: 'v8',
+        reporter: ['text', 'json', 'html'],
+      },
+    },
+  })
+);
+
+
+vitest.setup.ts
+import * as matchers from '@testing-library/jest-dom/matchers';
+import { config } from '@vue/test-utils';
+import { beforeAll, expect } from 'vitest';
+import 'vitest-canvas-mock';
+import { createI18n } from 'vue-i18n';
+
+expect.extend(matchers);
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'en',
+  messages: {
+    en: {},
+  },
+});
+
+beforeAll(() => {
+  config.global.plugins = [i18n];
+});
+
+global.IntersectionObserver = class IntersectionObserver {
+  root: Element | null = null;
+  rootMargin: string = '';
+  thresholds: ReadonlyArray<number> = [];
+
+  constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {}
+
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords(): IntersectionObserverEntry[] {
+    return [];
+  }
+};
+
+
+src\App.vue
+<template>
+  <div class="layout">
+    <Spinner v-if="isLoading" key="loading" size="large" ariaLabel="Loading..." />
+    <GameCanvas v-if="gameStore.gameStarted" key="canvas" :seed="gameStore.seed" :difficulty="gameStore.difficulty" @newGame="handleStartModal" />
+    <GameCanvasDemo v-if="!gameStore.gameStarted && !isLoading" class="preview-bg" />
+  </div>
+
+  <Teleport to="body">
+    <transition name="fade-panel"> <StartModal v-if="!gameStore.gameStarted && !isLoading" key="start" @start="handleStart" /></transition>
+    <transition name="fade-panel">
+      <DevPanel v-if="gameStore.devPanelVisible" />
+    </transition>
+  </Teleport>
+</template>
+
+<script setup lang="ts">
+import { useGameStart } from './hooks/useGameStart';
+import { useGameStateStorage } from './hooks/useGameStateStorage';
+import { useGameHistoryStore } from './stores/useGameHistoryStore';
+import { useGameStore } from './stores/useGameStore';
+
+const gameStore = useGameStore();
+const { isLoading, startGame } = useGameStart();
+const { load } = useGameStateStorage();
+
+defineEmits<{
+  (e: 'newGame'): void;
+}>();
+
+async function handleStart(payload: { seed: string; difficulty: number }) {
+  const result = await startGame(payload);
+  gameStore.startGame(result);
+}
+
+async function handleStartModal() {
+  gameStore.setGameStarted(false);
+  gameStore.setGameOver(false);
+}
+
+onMounted(() => {
+  const saved = load();
+  useGameHistoryStore().loadFromStorage();
+  if (saved) {
+    const anyMatched = saved.tiles.some((t) => t.matched);
+    if (anyMatched) {
+      gameStore.restoreGame(saved);
+    } else {
+      gameStore.setGameStarted(false);
+    }
+  }
+});
+</script>
+
+
+src\components.d.ts
+/* eslint-disable */
+// @ts-nocheck
+// Generated by unplugin-vue-components
+// Read more: https://github.com/vuejs/core/pull/3399
+// biome-ignore lint: disable
+export {}
+
+/* prettier-ignore */
+declare module 'vue' {
+  export interface GlobalComponents {
+    Button: typeof import('./shared/components/Button/Button.vue')['default']
+    CollapsiblePanel: typeof import('./shared/components/CollapsiblePanel/CollapsiblePanel.vue')['default']
+    DevPanel: typeof import('./components/DevPanel/DevPanel.vue')['default']
+    GameCanvas: typeof import('./components/GameCanvas/GameCanvas.vue')['default']
+    GameCanvasDemo: typeof import('./components/GameCanvasDemo/GameCanvasDemo.vue')['default']
+    GameOverModal: typeof import('./components/GameOverModal.vue')['default']
+    InputField: typeof import('./shared/components/InputField/InputField.vue')['default']
+    LazyImage: typeof import('./shared/components/LazyImage/LazyImage.vue')['default']
+    SelectField: typeof import('./shared/components/SelectField/SelectField.vue')['default']
+    Sidebar: typeof import('./components/Sidebar/Sidebar.vue')['default']
+    SidebarGameHistory: typeof import('./components/Sidebar/SidebarGameHistory/SidebarGameHistory.vue')['default']
+    SidebarInfoPanel: typeof import('./components/Sidebar/SidebarInfoPanel/SidebarInfoPanel.vue')['default']
+    SidebarLanguageFlags: typeof import('./components/Sidebar/SidebarLanguageFlags/SidebarLanguageFlags.vue')['default']
+    SidebarLegentPanel: typeof import('./components/Sidebar/SidebarLegentPanel/SidebarLegentPanel.vue')['default']
+    SidebarMatches: typeof import('./components/Sidebar/SidebarMatches/SidebarMatches.vue')['default']
+    SidebarStatsPanel: typeof import('./components/Sidebar/SidebarStatsPanel/SidebarStatsPanel.vue')['default']
+    SidebarVolumeControl: typeof import('./components/Sidebar/SidebarVolumeControl/SidebarVolumeControl.vue')['default']
+    Spinner: typeof import('./shared/components/Spinner/Spinner.vue')['default']
+    StartModal: typeof import('./components/StartModal.vue')['default']
+    TilePreview: typeof import('./components/Sidebar/TilePreview/TilePreview.vue')['default']
+  }
+}
+
+
+src\icons.ts
+import { OhVueIcon, addIcons } from 'oh-vue-icons';
+import { FaBars, FaCheck, FaChevronDown, FaHistory, FaSave, FaTimes, FaTools, FaUndo } from 'oh-vue-icons/icons/fa';
+
+addIcons(FaTools, FaHistory, FaSave, FaUndo, FaTimes, FaChevronDown, FaBars, FaCheck);
+
+export { OhVueIcon };
+
+
+src\main.ts
+import { createPinia } from 'pinia';
+import { createApp } from 'vue';
+import App from './App.vue';
+import './assests/scss/main.scss';
+import { availableLocales, i18n } from './i18n';
+import { OhVueIcon } from './icons';
+
+const app = createApp(App);
+const pinia = createPinia();
+
+app.use(i18n);
+app.use(pinia);
+app.component('VIcon', OhVueIcon);
+
+async function loadLocale(locale: string) {
+  if (!availableLocales.includes(locale)) return;
+  try {
+    const messages = await fetch(`/i18n/${locale}.json`).then((res) => res.json());
+    i18n.global.setLocaleMessage(locale, messages);
+    i18n.global.locale.value = locale;
+  } catch (err) {
+    console.warn(`Failed to load locale: ${locale}`, err);
+  }
+}
+
+let initialLocale = localStorage.getItem('user-locale');
+
+if (!initialLocale) {
+  const browserLang = navigator.language.split('-')[0];
+  if (availableLocales.includes(browserLang)) {
+    initialLocale = browserLang;
+  } else {
+    initialLocale = 'en';
+  }
+  localStorage.setItem('user-locale', initialLocale);
+}
+
+loadLocale(initialLocale).then(() => {
+  app.mount('#app');
+});
+
+export { loadLocale };
+
+
+src\components\GameOverModal.vue
+<template>
+  <div class="modal">
+    <h2 class="modal-title mb-2">{{ $t('modalEnd.title') }}</h2>
+    <p class="modal-message">{{ $t('modalEnd.message', { time, moves }) }}</p>
+
+    <div class="modal-actions">
+      <Button name="modalEnd.buttonReplay" :handleClick="() => $emit('restart')" />
+      <Button name="modalEnd.buttonNew" :handleClick="() => $emit('newgame')" />
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+const props = defineProps<{
+  time: string;
+  moves: number;
+}>();
+
+defineEmits<{
+  (e: 'restart'): void;
+  (e: 'newgame'): void;
+}>();
+</script>
+
+
+src\components\StartModal.vue
+<template>
+  <div class="modal" role="dialog" aria-modal="true">
+    <h2 class="modal-title mb-2">{{ $t('modalStart.title') }}</h2>
+
+    <p class="modal-info">
+      {{ $t('modalStart.noActiveGameInfo') }}
+    </p>
+
+    <InputField
+      id="seed"
+      v-model="localSeed"
+      :label="$t('modalStart.seedLabel')"
+      :placeholder="'np. awp-king'"
+      :description="$t('modalStart.seed')"
+      describedby="seed-desc"
+    />
+
+    <SelectField
+      id="difficulty"
+      v-model="localDifficulty"
+      :label="$t('modalStart.difficultyLabel')"
+      :description="$t('modalStart.difficulty')"
+      describedby="difficulty-desc"
+      :options="difficulties"
+    />
+    <p id="difficulty-desc" class="sr-only mb-2">{{ $t('modalStart.difficulty') }}</p>
+
+    <div class="modal-actions">
+      <Button name="modalStart.button" :handleClick="startGame" />
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+defineOptions({
+  inheritAttrs: false,
+});
+defineProps<{}>();
+
+const { t } = useI18n();
+const emit = defineEmits<{
+  (e: 'start', payload: { seed: string; difficulty: number }): void;
+}>();
+
+const localSeed = ref('');
+const localDifficulty = ref(1);
+
+const difficulties = computed(() => [
+  { id: 1, displayName: t('difficultyDict.easy') },
+  { id: 2, displayName: t('difficultyDict.medium') },
+  { id: 3, displayName: t('difficultyDict.hard') },
+]);
+
+function startGame() {
+  emit('start', {
+    seed: localSeed.value.trim(),
+    difficulty: localDifficulty.value,
+  });
+}
+</script>
+
+
+src\components\DevPanel\DevPanel.scss
+@import '@scss/mixins';
+@import '@scss/extend';
+
+.dev-panel {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: var(--main-bg-white);
+  border: 1px solid var(--main-border-gray);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  width: auto;
+  z-index: 50;
+  max-height: 80vh;
+
+  @extend %shared-box-shadow;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__subtitle {
+    margin-top: 1rem;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  &__history {
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    background-color: var(--main-bg-secondary);
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+
+    @include scrollbar-vertical;
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: var(--main-text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  &__preview {
+    font-size: 0.75rem;
+    color: var(--main-text-placeholder);
+    background-color: var(--main-bg-secondary);
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    overflow-x: auto;
+    max-height: 200px;
+
+    @include scrollbar-vertical;
+  }
+
+  &__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+}
+
+
+src\components\DevPanel\DevPanel.vue
+<script setup lang="ts">
+import { useFormattedTime } from '@/hooks/useFormattedTime';
+import { useGamePersistence } from '@/hooks/useGamePersistence';
+import { useGameHistoryStore } from '@/stores/useGameHistoryStore';
+import { useGameStore } from '@/stores/useGameStore';
+import { computed } from 'vue';
+
+const gameStore = useGameStore();
+const historyStore = useGameHistoryStore();
+const history = historyStore.history;
+const formattedTime = useFormattedTime(computed(() => gameStore.elapsed));
+const { saveState, clearState } = useGamePersistence(gameStore.seed, gameStore.difficulty);
+
+function handleSave() {
+  saveState(gameStore.gameState);
+}
+
+function handleReset() {
+  clearState();
+  gameStore.setGameStarted(false);
+}
+
+const statePreview = computed(() => ({
+  seed: gameStore.seed,
+  difficulty: gameStore.difficulty,
+  moves: gameStore.moves,
+  elapsed: formattedTime.value as string,
+  tilesMatched: gameStore.tiles.filter((t) => t.matched).length,
+  gameStarted: gameStore.gameStarted,
+  gameOver: gameStore.gameOver,
+  sidebarVisible: gameStore.sidebarVisible,
+  devPanelVisible: gameStore.devPanelVisible,
+  tiles: gameStore.tiles,
+}));
+</script>
+
+<template>
+  <div class="dev-panel">
+    <div class="dev-panel__header">
+      <h3 class="dev-panel__title"><VIcon name="fa-tools" /> {{ $t('devToolPanel.title') }}</h3>
+      <Button :handleClick="() => gameStore.toggleDevPanel()" variant="round" aria-label="Close Dev Panel"><VIcon name="fa-times" /></Button>
+    </div>
+
+    <pre class="dev-panel__preview">{{ JSON.stringify(statePreview, null, 2) }}</pre>
+
+    <CollapsiblePanel :title="$t('devToolPanel.history')">
+      <pre class="dev-panel__preview">{{ JSON.stringify(history, null, 2) }}</pre>
+    </CollapsiblePanel>
+
+    <div class="dev-panel__buttons">
+      <Button :handleClick="handleSave" className="gap-8"><VIcon name="fa-save" /> {{ $t('devToolPanel.btnSave') }}</Button>
+      <Button :handleClick="handleReset" className="gap-8"><VIcon name="fa-undo" /> {{ $t('devToolPanel.btnReset') }}</Button>
+    </div>
+
+    <h4 class="dev-panel__subtitle"><VIcon name="fa-history" /> {{ $t('devToolPanel.history') }}</h4>
+  </div>
+</template>
+
+<style scoped src="./DevPanel.scss" />
+
+
+src\components\GameCanvas\GameCanvas.const.ts
+import type { Rarity, Tile } from './GameCanvas.types';
+
+export const RarityColors: Record<Tile['rarity'], string> = {
+  consumer: '#999999',
+  industrial: '#5a9bd4',
+  milspec: '#4b6cb7',
+  restricted: '#cf6ccf',
+  classified: '#f55',
+  covert: '#f2b01e',
+};
+
+export const RarityBorders: Record<Rarity, string> = {
+  consumer: '#b0b0b0',
+  industrial: '#5e98d9',
+  milspec: '#4b69ff',
+  restricted: '#8847ff',
+  classified: '#d32ce6',
+  covert: '#eb4b4b',
+};
+
+export const colors: Record<string, string> = {
+  black: '#000',
+  tonedBlack: '#222',
+  gray: '#444',
+  darkBlue: '#0860d8',
+  lightGray: 'oklch(97.7% 0.013 236.62)',
+  shadowColor: 'rgba(21, 93, 252, 0.8)',
+};
+
+export const fontRoboto = '12px Roboto';
+export const LocalStorageName = 'memory-game-history';
+
+export const rarities: Rarity[] = ['consumer', 'industrial', 'milspec', 'restricted', 'classified', 'covert'];
+
+export const weapons = [
+  'ak47',
+  'aug',
+  'awp',
+  'cz75a',
+  'deagle',
+  'famas',
+  'five-seven',
+  'g3sg1',
+  'galil-ar',
+  'glock-18',
+  'm249',
+  'm4a1',
+  'm4a4',
+  'mac-10',
+  'mag-7',
+  'mp5-sd',
+  'mp7',
+  'mp9',
+  'negev',
+  'nova',
+  'p2000',
+  'p250',
+  'p90',
+  'pp-bizon',
+  'revolver',
+  'sawed-off',
+  'scar-20',
+  'sg-556',
+  'ssg-08',
+  'taser',
+  'tec-9',
+  'ump-45',
+  'usp-s',
+  'xm1014',
+];
+
+
+src\components\GameCanvas\GameCanvas.scss
+@import '@scss/mixins';
+@import '@scss/extend';
+
+.game {
+  &-canvas {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+    background-color: var(--main-bg-gray);
+    padding-top: 0.75rem;
+    padding-inline: 0.75rem;
+    overflow-x: hidden;
+    min-height: 100vh;
+
+    @include mq(minlg) {
+      justify-content: space-between;
+      padding-left: 1.25rem;
+      padding-right: 0;
+      padding-top: 0;
+    }
+  }
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+  }
+
+  &-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background-color: var(--main-bg-blue);
+    color: var(--main-text-white);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+
+    @extend %shared-box-shadow;
+
+    @include mq(minlg) {
+      margin-top: 1rem;
+    }
+  }
+
+  &-canvas-element {
+    border-radius: 0.75rem;
+    max-width: 100%;
+    display: block;
+    margin-inline: auto;
+
+    @extend %shared-box-shadow;
+  }
+}
+
+
+src\components\GameCanvas\GameCanvas.types.ts
+export type Rarity = 'consumer' | 'industrial' | 'milspec' | 'restricted' | 'classified' | 'covert';
+export type MatchResult = 'match' | 'mismatch';
+
+export interface MatchRecord {
+  a: Tile;
+  b: Tile;
+  result: MatchResult;
+  timestamp?: number;
+}
+
+export interface GameHistoryEntry {
+  dateStart: string | null;
+  dateEnd: string | null;
+  time: number;
+  moves: number;
+  seed: string;
+  difficulty: number;
+  matchCount: number;
+  mismatchCount: number;
+  matchedPairs: MatchRecord[];
+}
+
+export interface Tile {
+  id: number;
+  name: string;
+  rarity: Rarity;
+  pairId: number;
+  flipped: boolean;
+  matched: boolean;
+  x: number;
+  y: number;
+  imagePath?: string;
+  color?: string;
+  value?: number;
+  haloAngle?: number;
+}
+
+export interface Skin {
+  id: number;
+  name: string;
+  imagePath: string;
+  rarity: Rarity;
+}
+
+export interface GameState {
+  dateStart: string | null;
+  tiles: Tile[];
+  elapsedSeconds: number;
+  moves: number;
+  seed: string;
+  difficulty: number;
+  matchCount: number;
+  mismatchCount: number;
+  matchedPairs: MatchRecord[];
+}
+
+export type ParallaxState = {
+  mouseX: number;
+  mouseY: number;
+};
+
+
+src\components\GameCanvas\GameCanvas.vue
+<template>
+  <div class="game-canvas">
+    <div class="game-content" :class="{ 'with-sidebar': gameStore.sidebarVisible }">
+      <div class="game-info">{{ formattedTime }} | {{ $t('game.moves', { n: gameStore.moves }) }}</div>
+
+      <canvas ref="canvasRef" class="game-canvas-element" role="img" :aria-label="$t('game.canvasLabel')" :style="{ height: 'auto' }">
+        {{ $t('errors.canvasFallBack') }}
+      </canvas>
+
+      <Teleport to="body">
+        <transition name="fade-panel">
+          <GameOverModal
+            v-if="gameStore?.gameOver ?? false"
+            :time="formattedTime ?? ''"
+            :moves="gameStore.moves ?? 0"
+            @restart="restartGame"
+            @newgame="goToStart"
+          />
+        </transition>
+      </Teleport>
+    </div>
+
+    <Sidebar @restart="restartGame" @newGame="goToStart" />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useBeforeUnloadBackup } from '@/hooks/useBeforeUnloadBackup';
+import { useCanvasLayout } from '@/hooks/useCanvasLayout';
+import { useCanvasRenderer } from '@/hooks/useCanvasRenderer';
+import { useDebouncedRedraw } from '@/hooks/useDebouncedRedraw';
+import { useFormattedTime } from '@/hooks/useFormattedTime';
+import { useGamePersistence } from '@/hooks/useGamePersistence';
+import { useMouseCanvasPosition } from '@/hooks/useMouseCanvasPosition';
+import { useMouseTileHover } from '@/hooks/useMouseTileHover';
+import { useResizeObserver } from '@/hooks/useResizeObserver';
+import { useTileInteractions } from '@/hooks/useTileInteractions';
+import { useTimer } from '@/hooks/useTimer';
+import { sounds } from '@/shared/sounds/sounds';
+import { throttle } from '@/shared/utils/throttle';
+import { useGameHistoryStore } from '@/stores/useGameHistoryStore';
+import { useGameStore } from '@/stores/useGameStore';
+import { nextTick, onMounted, onUnmounted, ref } from 'vue';
+
+const props = defineProps<{
+  seed: string;
+  difficulty: number;
+}>();
+
+const emit = defineEmits(['restart', 'newGame']);
+
+const gameStore = useGameStore();
+const historyStore = useGameHistoryStore();
+const canvasRef = ref<HTMLCanvasElement | null>(null);
+const parentElement = ref<HTMLElement | null>(null);
+const currentTileSize = ref(100);
+const fadeStartTime = ref<number | null>(null);
+const tiles = computed(() => gameStore.tiles);
+
+const { saveState, loadState, clearState } = useGamePersistence(gameStore.seed, gameStore.difficulty);
+
+const throttledBackup = throttle(() => {
+  saveState(gameStore.gameState);
+}, 30000);
+
+const { start, stop, reset } = useTimer(throttledBackup);
+const elapsed = computed(() => gameStore.elapsed);
+const formattedTime = useFormattedTime(elapsed);
+
+function recordVictoryStats() {
+  historyStore.addEntry({
+    dateStart: gameStore.dateStart ?? new Date().toISOString(),
+    time: gameStore.elapsed,
+    moves: gameStore.moves,
+    dateEnd: new Date().toISOString(),
+    seed: gameStore.seed,
+    difficulty: gameStore.difficulty,
+    matchCount: gameStore.matchCount,
+    mismatchCount: gameStore.mismatchCount,
+    matchedPairs: gameStore.matchedPairs,
+  });
+}
+
+function goToStart() {
+  clearState();
+  gameStore.setGameStarted(false);
+  emit('newGame');
+}
+
+const { getMousePosition } = useMouseCanvasPosition(canvasRef);
+const { hoveredTileId, mouseX, mouseY, handleMouseMove } = useMouseTileHover(canvasRef, tiles, currentTileSize, getMousePosition);
+const { handleClick, resetInteractions, isGameOver } = useTileInteractions(
+  canvasRef,
+  tiles,
+  mouseX,
+  mouseY,
+  hoveredTileId,
+  {
+    onGameOver: () => {
+      recordVictoryStats();
+      stop();
+      gameStore.setGameOver(true);
+      saveState(gameStore.gameState);
+    },
+  },
+  currentTileSize
+);
+
+const { applyTileLayout } = useCanvasLayout(canvasRef, tiles, currentTileSize);
+
+const { startAnimationLoop, layoutAndRedraw } = useCanvasRenderer(
+  canvasRef,
+  tiles,
+  mouseX,
+  mouseY,
+  hoveredTileId,
+  currentTileSize,
+  applyTileLayout,
+  fadeStartTime
+);
+
+const { debouncedRedraw } = useDebouncedRedraw(layoutAndRedraw, 100);
+
+function restartGame() {
+  fadeStartTime.value = Date.now();
+  gameStore.restartGame();
+  gameStore.setGameOver(false);
+  gameStore.setGameStarted(true);
+  resetInteractions();
+  debouncedRedraw();
+  clearState();
+  reset();
+  start();
+}
+
+useResizeObserver(parentElement, () => debouncedRedraw());
+
+onMounted(async () => {
+  if (!canvasRef.value) return;
+  useBeforeUnloadBackup();
+  const saved = loadState();
+  Object.values(sounds).forEach((s) => s.load());
+
+  if (saved) {
+    gameStore.restoreGame(saved);
+  }
+
+  resetInteractions();
+  await nextTick();
+  fadeStartTime.value = Date.now();
+  layoutAndRedraw();
+
+  canvasRef.value?.addEventListener('click', handleClick);
+  window.addEventListener('mousemove', handleMouseMove);
+  canvasRef.value?.addEventListener('touchstart', handleMouseMove, { passive: true });
+  canvasRef.value?.addEventListener('touchmove', handleMouseMove, { passive: true });
+  canvasRef.value?.addEventListener('touchend', handleClick);
+
+  startAnimationLoop();
+
+  parentElement.value = canvasRef.value?.parentElement ?? null;
+
+  start();
+});
+
+onUnmounted(() => {
+  stop();
+  window.removeEventListener('mousemove', handleMouseMove);
+  canvasRef.value?.removeEventListener('click', handleClick);
+
+  canvasRef.value?.removeEventListener('touchstart', handleMouseMove);
+  canvasRef.value?.removeEventListener('touchmove', handleMouseMove);
+  canvasRef.value?.removeEventListener('touchend', handleClick);
+});
+</script>
+
+<style scoped src="./GameCanvas.scss" />
+
+
+src\components\GameCanvasDemo\GameCanvasDemo.scss
+@import '@scss/extend';
+
+@keyframes halo-spin {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@mixin halo-border($color) {
+  position: relative;
+  z-index: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background: linear-gradient(90deg, $color, white, $color);
+    background-size: 200% 200%;
+    animation: halo-spin 1s linear infinite;
+    z-index: 2;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    mask-composite: xor;
+    padding: 6px;
+  }
+}
+
+.demo {
+  &-container {
+    min-height: 100vh;
+    max-height: 100vh;
+    width: 100%;
+    background-color: var(--main-bg-gray);
+    display: flex;
+    overflow-y: hidden;
+  }
+
+  &-game {
+    display: grid;
+    grid-template-columns: repeat(6, 100px);
+    gap: 8px;
+    padding: 16px;
+    transform-origin: top center;
+    transition: transform 0.2s ease;
+    width: 100%;
+    height: 100%;
+
+    & .tile {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1;
+      perspective: 10000px;
+      position: relative;
+
+      & > .tile-back,
+      & > .tile-front {
+        border-radius: 8px;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+      }
+
+      & > .tile-back {
+        transition: all 300ms ease-in-out;
+      }
+
+      & > .tile-front {
+        transition: all 500ms ease-in-out;
+      }
+
+      & .tile-front {
+        padding: 8px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: rotateY(180deg);
+      }
+
+      & .tile-back {
+        width: 100%;
+        height: 100%;
+        background-color: var(--main-bg-blue);
+        transform: rotateY(0deg);
+      }
+
+      &.flipped .tile-front {
+        transform: rotateY(0deg);
+      }
+
+      &.flipped .tile-back {
+        transform: rotateY(-180deg);
+      }
+
+      & .tile-name {
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        color: var(--main-text-white);
+        font-size: 1.25rem;
+        font-weight: 500;
+
+        @extend %text-shadow;
+      }
+    }
+  }
+}
+
+$rarity-colors: (
+  consumer: #999,
+  industrial: #5a9bd4,
+  milspec: #4b6cb7,
+  restricted: #cf6ccf,
+  classified: #f55,
+  covert: #f2b01e,
+);
+$dark-blue: #0860d8;
+
+.tile.flipped,
+.tile.matched {
+  @each $rarity, $color in $rarity-colors {
+    & .rarity-#{$rarity} {
+      background: linear-gradient(135deg, #{$color}, #{$dark-blue});
+    }
+  }
+}
+
+.tile.matched {
+  @each $rarity, $color in $rarity-colors {
+    & .rarity-border-#{$rarity} {
+      background: linear-gradient(90deg, #{$color}, #{$dark-blue});
+
+      @include halo-border($color);
+    }
+  }
+}
+
+
+src\components\GameCanvasDemo\GameCanvasDemo.vue
+<template>
+  <div class="demo-container" ref="containerRef">
+    <div class="demo-game" ref="gameRef" :style="gridStyle">
+      <div v-for="tile in tiles" :key="tile.id" class="tile" :class="[{ flipped: tile.flipped, matched: tile.matched }]">
+        <div class="tile-front" :class="[`rarity-${tile.rarity}`, { [`rarity-border-${tile.rarity}`]: tile.matched }]">
+          <LazyImage :src="tile.imagePath" :alt="tile.name" className="tile-img" />
+          <span class="tile-name">{{ tile.name }}</span>
+        </div>
+        <div class="tile-back"></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useDemoGame } from '@/hooks/useDemoGame';
+import { useResizeObserver } from '@/hooks/useResizeObserver';
+import { ref, watch } from 'vue';
+
+const { tiles } = useDemoGame(() => setTimeout(() => scaleGrid(), 600));
+const containerRef = ref<HTMLElement | null>(null);
+const gameRef = ref<HTMLElement | null>(null);
+
+function scaleGrid() {
+  const container = containerRef.value;
+  const game = gameRef.value;
+  if (!container || !game) return;
+  const gameHeight = game.offsetHeight;
+  const containerHeight = container.clientHeight;
+  const scale = Math.min(1, containerHeight / gameHeight);
+  game.style.transform = `scale(${scale})`;
+}
+
+const gridStyle = computed(() => {
+  const cols = Math.min(6, Math.ceil(Math.sqrt(tiles.value.length)));
+  return {
+    display: 'grid',
+    gridTemplateColumns: `repeat(${cols}, 1fr)`,
+    gap: '8px',
+    padding: '1rem',
+  };
+});
+
+useResizeObserver(containerRef, () => {
+  scaleGrid();
+});
+
+watch(tiles, () => {
+  scaleGrid();
+});
+</script>
+
+<style scoped src="./GameCanvasDemo.scss" />
+
+
+src\components\Sidebar\Sidebar.scss
+@import '@scss/mixins';
+@import '@scss/extend';
+
+.sidebar {
+  background-color: var(--main-bg-secondary);
+  border-radius: 1rem 0 0 1rem;
+  position: relative;
+  transition: transform 0.5s ease-in-out;
+  display: flex;
+  transform: translateX(100%);
+  max-height: 100vh;
+  width: 100%;
+  max-width: 310px;
+  will-change: transform;
+
+  @extend %shared-box-shadow;
+  @include scrollbar-vertical;
+
+  @include mq(maxsm) {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+  }
+
+  &.open {
+    transform: translateX(0);
+
+    & .sidebar-container {
+      flex: 0 0 310px;
+      opacity: 1;
+      visibility: visible;
+      padding: 1rem;
+
+      @include mq(maxsm) {
+        flex: 0 0 310px;
+      }
+    }
+
+    & .sidebar-close {
+      transform: translateX(-50%);
+    }
+  }
+
+  &-container {
+    transition:
+      flex-basis 0.5s ease-in-out,
+      opacity 0.5s ease-in-out,
+      visibility 0.5s ease-in-out,
+      padding 0.5s ease-in-out;
+    opacity: 0;
+    gap: 1rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 0;
+    max-width: 320px;
+    padding: 0;
+    overflow: hidden;
+    visibility: hidden;
+    will-change: transform, opacity, flex-basis;
+  }
+
+  &:not(.open) .sidebar-container {
+    pointer-events: none;
+  }
+
+  &-close {
+    position: absolute;
+    top: 5rem;
+    left: 0;
+    transform: translateX(-100%);
+    z-index: 20;
+    will-change: transform;
+    transition: transform 0.5s ease-in-out;
+
+    @include mq(maxsm) {
+      top: 2rem;
+    }
+  }
+
+  & .sidebar-close .arrow-icon {
+    transform: rotate(90deg);
+    transition: transform 0.5s ease-in-out;
+    will-change: transform;
+
+    &.rotated {
+      transform: rotate(-90deg);
+    }
+  }
+
+  @include mq(minlg) {
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  &-title {
+    font-size: 1.25rem;
+    color: var(--main-text-blue);
+    font-weight: bold;
+    text-align: center;
+  }
+
+  &-buttons-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    @include mq(minlg) {
+      flex-direction: row;
+      gap: 1rem;
+    }
+  }
+}
+
+
+src\components\Sidebar\Sidebar.vue
+<template>
+  <aside :class="['sidebar', { open: gameStore.sidebarVisible }]" role="region">
+    <Button className="sidebar-close" variant="round" :handleClick="() => gameStore.toggleSidebar(!gameStore.sidebarVisible)" aria-label="Zamknij panel">
+      <VIcon name="fa-chevron-down" :class="{ rotated: gameStore.sidebarVisible }" class="arrow-icon" />
+    </Button>
+
+    <div class="sidebar-container">
+      <SidebarLanguageFlags />
+
+      <h2 class="sidebar-title">{{ $t('sidebar.title') }}</h2>
+
+      <SidebarInfoPanel />
+
+      <div class="sidebar-buttons-controls">
+        <Button :handleClick="() => $emit('restart')" :name="'sidebar.buttonReplay'" />
+        <Button :name="'sidebar.buttonNew'" :handleClick="() => $emit('newGame')" />
+      </div>
+
+      <SidebarVolumeControl />
+
+      <SidebarStatsPanel />
+
+      <SidebarMatches />
+
+      <SidebarLegentPanel />
+
+      <SidebarGameHistory />
+
+      <div class="d-block">
+        <Button name="sidebar.buttonDevTools" :handleClick="gameStore.toggleDevPanel" variant="secondary" />
+      </div>
+    </div>
+  </aside>
+</template>
+
+<script setup lang="ts">
+import { useGameStore } from '@/stores/useGameStore';
+import './Sidebar.scss';
+
+const gameStore = useGameStore();
+
+defineEmits(['restart', 'newGame']);
+</script>
+
+
+src\components\Sidebar\SidebarGameHistory\SidebarGameHistory.scss
+@import '@scss/mixins';
+@import '@scss/extend';
+
+.game-history {
+  width: 100%;
+  max-width: 32rem;
+  font-size: var(--font-size-base);
+  color: var(--main-text-primary);
+
+  & .history {
+    &-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      max-height: 260px;
+      overflow-y: auto;
+      padding: 1px;
+
+      @include scrollbar-vertical(12px);
+    }
+
+    &-item {
+      background-color: var(--main-bg-white);
+      padding: 0.35rem;
+      border-radius: 0.5rem;
+
+      @extend %shared-box-shadow;
+    }
+
+    &-seed {
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    &-details {
+      font-size: 0.75rem;
+      margin-bottom: 0.25rem;
+    }
+
+    &-date {
+      font-size: 0.75rem;
+      color: var(--main-text-placeholder);
+    }
+
+    &-empty {
+      color: var(--main-text-placeholder);
+    }
+  }
+
+  & .match-history-list {
+    padding: 0.25rem 0;
+
+    &--title {
+      margin-bottom: 0.25rem;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    &--list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 265px;
+      overflow-y: auto;
+      padding: 3px;
+
+      @include scrollbar-vertical(12px);
+    }
+
+    &--entry {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: column;
+      padding: 4px;
+      border-radius: 6px;
+
+      @extend %shared-box-shadow;
+
+      & .type {
+        font-size: 12px;
+        font-weight: 500;
+
+        & .match,
+        & .mismatch {
+          display: flex;
+          align-items: center;
+        }
+
+        & .match {
+          color: var(--main-text-green);
+        }
+
+        & .mismatch {
+          color: var(--main-text-red);
+        }
+      }
+    }
+
+    & .tile-preview {
+      flex-direction: column;
+
+      &--info {
+        align-items: center;
+      }
+    }
+
+    &--pair {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    &--empty-msg {
+      font-style: italic;
+      color: var(--main-text-primary);
+    }
+
+    .vs {
+      font-weight: bold;
+    }
+  }
+}
+
+
+src\components\Sidebar\SidebarGameHistory\SidebarGameHistory.vue
+<template>
+  <CollapsiblePanel :title="$t('history.title')">
+    <div class="game-history">
+      <ul v-if="history.length > 0" class="history-list">
+        <li v-for="(entry, index) in history" :key="index" class="history-item">
+          <div class="history-seed">
+            <b>{{ entry.seed }}</b> ({{ entry.difficulty }})
+          </div>
+          <div class="history-details">
+            {{ $t('history.timeMoves', { time: entry.time, moves: entry.moves }) }}
+          </div>
+          <div class="history-details">
+            {{ $t('history.matchedCount', { matchCount: entry.matchCount, mismatchCount: entry.mismatchCount }) }}
+          </div>
+          <div class="history-date">
+            {{ formatDate(entry?.dateStart ?? '') }}
+          </div>
+
+          <CollapsiblePanel :title="$t('history.matchedMismatch')" :size="'xs'">
+            <div class="match-history-list">
+              <div v-if="!entry.matchedPairs.length" class="match-history-list--empty-msg">{{ $t('devToolPanel.matchHistory.empty') }}</div>
+              <div v-else class="match-history-list--list">
+                <div v-for="(item, index) in entry.matchedPairs" :key="index" class="match-history-list--entry">
+                  <div class="type">
+                    <span class="time">at: {{ item.timestamp ? useFormattedTime(ref(Number((item.timestamp / 1000).toFixed(1)))) : '' }}</span>
+                    <template v-if="item.result === 'match'"
+                      ><span class="match"><VIcon name="fa-check" /> {{ $t('devToolPanel.matchHistory.match') }}</span></template
+                    >
+                    <template v-else
+                      ><span class="mismatch"><VIcon name="fa-times" /> {{ $t('devToolPanel.matchHistory.mismatch') }}</span></template
+                    >
+                  </div>
+                  <div class="match-history-list--pair">
+                    <TilePreview :tile="item.a" />
+                    <span class="vs">vs</span>
+                    <TilePreview :tile="item.b" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CollapsiblePanel>
+        </li>
+      </ul>
+      <p v-else class="history-empty">{{ $t('history.error') }}</p>
+    </div>
+  </CollapsiblePanel>
+</template>
+
+<script setup lang="ts">
+import { useFormattedTime } from '@/hooks/useFormattedTime';
+import { formatDate } from '@/shared/utils/formatDate'; // Adjust the path based on your project structure
+import { useGameHistoryStore } from '@/stores/useGameHistoryStore';
+import './SidebarGameHistory.scss';
+
+defineOptions({
+  inheritAttrs: false,
+});
+defineProps<{}>();
+
+const { history } = useGameHistoryStore();
+</script>
+
+
+src\components\Sidebar\SidebarInfoPanel\SidebarInfoPanel.scss
+.sidebar-info-panel {
+  color: var(--main-text-blue);
+
+  p {
+    margin: 4px 0;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+
+src\components\Sidebar\SidebarInfoPanel\SidebarInfoPanel.vue
+<template>
+  <div class="sidebar-info-panel">
+    <p>
+      <strong>{{ $t('sidebar.time') }}</strong> {{ formattedTime ?? '' }}
+    </p>
+    <p>
+      <strong>{{ $t('sidebar.dateStart') }}</strong> {{ formattedDateTime ?? '' }}
+    </p>
+    <p>
+      <strong>{{ $t('sidebar.moves') }}</strong> {{ gameStore.moves ?? 0 }}
+    </p>
+    <p>
+      <strong>{{ $t('sidebar.matchCount') }}</strong> {{ gameStore.matchCount ?? 0 }}
+    </p>
+    <p>
+      <strong>{{ $t('sidebar.mismatchCount') }}</strong> {{ gameStore.mismatchCount ?? 0 }}
+    </p>
+    <p>
+      <strong>{{ $t('sidebar.seed') }}</strong> {{ gameStore.seed ?? '' }}
+    </p>
+    <p>
+      <strong>{{ $t('sidebar.difficulty') }}</strong> {{ difficultyLabel ?? '' }}
+    </p>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useFormattedTime } from '@/hooks/useFormattedTime';
+import { useGameStore } from '@/stores/useGameStore';
+import { useI18n } from 'vue-i18n';
+
+defineOptions({
+  inheritAttrs: false,
+});
+defineProps<{}>();
+
+const { t } = useI18n();
+
+const gameStore = useGameStore();
+const elapsed = computed(() => gameStore.elapsed);
+const formattedTime = useFormattedTime(elapsed);
+const formattedDateTime = useDateFormat(gameStore.dateStart ?? '', 'YYYY-MM-DD HH:mm:ss');
+
+const difficultyLabel = computed(() => {
+  switch (gameStore.difficulty) {
+    case 1:
+      return t('difficultyDict.easy');
+    case 2:
+      return t('difficultyDict.medium');
+    case 3:
+      return t('difficultyDict.hard');
+    default:
+      return t('difficultyDict.unknown');
+  }
+});
+</script>
+
+<style scoped src="./SidebarInfoPanel.scss" />
+
+
+src\components\Sidebar\SidebarLanguageFlags\SidebarLanguageFlags.scss
+.locale-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  & .active {
+    background-color: var(--main-bg-silver-haze) !important;
+  }
+
+  & .flag {
+    max-height: 14px;
+    border-radius: 4px;
+  }
+}
+
+
+src\components\Sidebar\SidebarLanguageFlags\SidebarLanguageFlags.vue
+<template>
+  <div class="locale-switcher">
+    <Button
+      v-for="lang in localeOptions"
+      :key="lang.code"
+      :handleClick="() => setLocale(lang.code)"
+      :aria-label="lang.label"
+      :active="locale === lang.code"
+      variant="round"
+    >
+      <LazyImage :src="lang.flag" alt="" className="flag" />
+    </Button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { localeOptions } from '@/i18n/locales';
+import { loadLocale } from '@/main';
+import { useI18n } from 'vue-i18n';
+import './SidebarLanguageFlags.scss';
+
+defineOptions({
+  inheritAttrs: false,
+});
+defineProps<{}>();
+
+const { locale } = useI18n();
+const setLocale = async (code: string) => {
+  if (code !== locale.value) {
+    await loadLocale(code);
+    localStorage.setItem('user-locale', code);
+    locale.value = code;
+  }
+};
+</script>
+
+
+src\components\Sidebar\SidebarLegentPanel\SidebarLegentPanel.scss
+.sidebar-rarity-legend-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+
+  & .legend {
+    &-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.875rem;
+    }
+
+    &-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+  }
+}
+
+
+src\components\Sidebar\SidebarLegentPanel\SidebarLegentPanel.vue
+<template>
+  <CollapsiblePanel :title="$t('rarityLegend.title')">
+    <div class="sidebar-rarity-legend-panel">
+      <div v-for="rarity in rarities" :key="rarity" class="legend-item">
+        <span class="legend-color" :style="{ backgroundColor: RarityColors[rarity] }" />
+        <span>{{ $t('rarityLegend.' + rarity) }}</span>
+      </div>
+    </div>
+  </CollapsiblePanel>
+</template>
+
+<script setup lang="ts">
+import { rarities, RarityColors } from '@/components/GameCanvas/GameCanvas.const';
+
+defineOptions({
+  inheritAttrs: false,
+});
+defineProps<{}>();
+</script>
+
+<style scoped src="./SidebarLegentPanel.scss" />
+
+
+src\components\Sidebar\SidebarMatches\SidebarMatches.scss
+@import '@scss/extend';
+
+.sidebar-last-match {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: var(--main-bg-dark);
+  font-size: 0.875rem;
+
+  @extend %shared-box-shadow;
+
+  &.match {
+    border-left: 4px solid var(--main-bg-green);
+  }
+
+  &.mismatch {
+    border-left: 4px solid var(--main-bg-red);
+  }
+
+  & .label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+
+    &.match {
+      color: var(--main-text-green);
+    }
+
+    &.mismatch {
+      color: var(--main-text-red);
+    }
+  }
+
+  & .tiles {
+    display: flex;
+    gap: 0.5rem;
+
+    & .tile-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      & img {
+        max-height: 95px;
+        border-radius: 0.5rem;
+
+        &.match {
+          border: 2px solid var(--main-bg-green) !important;
+        }
+
+        &.mismatch {
+          border: 2px solid var(--main-bg-red) !important;
+        }
+      }
+
+      & .name {
+        font-size: 0.75rem;
+        text-align: center;
+        white-space: nowrap;
+        font-weight: 600;
+        color: var(--main-text-blue);
+      }
+    }
+  }
+}
+
+
+src\components\Sidebar\SidebarMatches\SidebarMatches.vue
+<template>
+  <div v-if="lastMatch?.result" class="sidebar-last-match" :class="lastMatch?.result">
+    <p class="label" :class="lastMatch?.result">
+      <template v-if="lastMatch?.result === 'match'"><VIcon name="fa-check" /> {{ $t('sidebar.matches.match') }}</template>
+      <template v-else><VIcon name="fa-times" /> {{ $t('sidebar.matches.mismatch') }}</template>
+    </p>
+    <div class="tiles">
+      <div class="tile-preview">
+        <LazyImage :src="lastMatch?.a?.imagePath" :alt="lastMatch?.a?.name" :className="lastMatch?.result" />
+        <span class="name">{{ lastMatch?.a?.name }}</span>
+      </div>
+      <div class="tile-preview">
+        <LazyImage :src="lastMatch?.b?.imagePath" :alt="lastMatch?.b?.name" :className="lastMatch?.result" />
+        <span class="name">{{ lastMatch?.b?.name }}</span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useGameStore } from '@/stores/useGameStore';
+import './SidebarMatches.scss';
+
+const gameStore = useGameStore();
+const lastMatch = computed(() => {
+  const matches = gameStore.matchedPairs;
+  return matches.length ? matches[matches.length - 1] : null;
+});
+</script>
+
+
+src\components\Sidebar\SidebarStatsPanel\SidebarStatsPanel.scss
+.sidebar-stats-panel {
+  color: var(--main-text-blue);
+
+  &--title {
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  p {
+    margin: 4px 0;
+    font-weight: 600;
+  }
+
+  span {
+    font-weight: 400;
+  }
+}
+
+
+src\components\Sidebar\SidebarStatsPanel\SidebarStatsPanel.vue
+<template>
+  <div class="sidebar-stats-panel">
+    <h3 class="sidebar-stats-panel--title">{{ $t('sidebar.statsTitle') }}</h3>
+    <p>
+      {{ $t('sidebar.gamesPlayed') }}: <span>{{ stats.games }}</span>
+    </p>
+    <p>
+      {{ $t('sidebar.avgTime') }}: <span>{{ stats.avgTime }}</span>
+    </p>
+    <p>
+      {{ $t('sidebar.avgMoves') }}: <span>{{ stats.avgMoves }}</span>
+    </p>
+    <p>
+      {{ $t('sidebar.totalMatches') }}: <span>{{ stats.totalMatches }}</span>
+    </p>
+    <p>
+      {{ $t('sidebar.totalMismatches') }}: <span>{{ stats.totalMismatches }}</span>
+    </p>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useFormattedTime } from '@/hooks/useFormattedTime';
+import { useGameHistoryStore } from '@/stores/useGameHistoryStore';
+
+defineOptions({
+  inheritAttrs: false,
+});
+defineProps<{}>();
+
+const { history } = useGameHistoryStore();
+
+const stats = computed(() => {
+  const games = history.length;
+  const avgTime = useFormattedTime(ref(games ? Math.round(history.reduce((a, e) => a + e.time, 0) / games) : 0)).value;
+  const avgMoves = games ? Math.round(history.reduce((a, e) => a + e.moves, 0) / games) : 0;
+  const totalMatches = history.reduce((a, e) => a + (e.matchCount ?? 0), 0);
+  const totalMismatches = history.reduce((a, e) => a + (e.mismatchCount ?? 0), 0);
+  return { games, avgTime, avgMoves, totalMatches, totalMismatches };
+});
+</script>
+
+<style scoped src="./SidebarStatsPanel.scss" />
+
+
+src\components\Sidebar\SidebarVolumeControl\SidebarVolumeControl.scss
+@import '@scss/variables';
+@import '@scss/extend';
+
+$track-height: 1.2rem;
+$thumb-size: 1.2rem;
+$thumb-radius: 0.6rem;
+$padding: 0.25rem;
+
+.volume {
+  &-control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &-label {
+    color: var(--main-text-blue);
+    font-weight: 500;
+  }
+
+  &-slider-wrapper {
+    position: relative;
+  }
+
+  &-indicator {
+    position: absolute;
+    top: -1.8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--main-bg-orange);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.4rem;
+
+    @extend %shared-box-shadow;
+  }
+}
+
+.range {
+  &-volume {
+    width: 100%;
+    height: $track-height;
+    border-radius: $track-height;
+    appearance: none;
+    background:
+      linear-gradient(#f8dd36, #d68706) 0 0 / var(--pos) 100% no-repeat,
+      linear-gradient(#efefef, #c9c9c9);
+    box-shadow:
+      inset 0 1px 4px #8c8c8c,
+      0 -1px #eaeaea,
+      0 1px #fff;
+    cursor: pointer;
+    padding: 0;
+
+    &::-webkit-slider-runnable-track {
+      height: $track-height;
+      border-radius: $track-height;
+      background: transparent;
+    }
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      width: $thumb-size;
+      height: $thumb-size;
+      margin-top: calc(($track-height - $thumb-size) / 2);
+      background:
+        linear-gradient(#c5c5c5, whitesmoke) padding-box,
+        linear-gradient(#fbfbfb, #c2c2c2) border-box;
+      border: solid $padding transparent;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px #7d7d7d;
+      cursor: pointer;
+    }
+
+    &::-moz-range-track {
+      height: $track-height;
+      border-radius: $track-height;
+      background:
+        linear-gradient(#f8dd36, #d68706) var(--pos) / var(--pos) no-repeat,
+        linear-gradient(#efefef, #c9c9c9);
+      box-shadow: inset 0 1px 4px #8c8c8c;
+    }
+
+    &::-moz-range-thumb {
+      width: $thumb-size;
+      height: $thumb-size;
+      background:
+        linear-gradient(#c5c5c5, whitesmoke) padding-box,
+        linear-gradient(#fbfbfb, #c2c2c2) border-box;
+      border: solid $padding transparent;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px #7d7d7d;
+      cursor: pointer;
+    }
+  }
+}
+
+.speaker {
+  background-color: transparent;
+  padding: 2px;
+
+  &:hover {
+    color: var(--main-text-white);
+  }
+
+  &.muted {
+    background-color: var(--main-bg-orange) !important;
+  }
+}
+
+
+src\components\Sidebar\SidebarVolumeControl\SidebarVolumeControl.vue
+<template>
+  <div
+    class="volume-control"
+    :style="{
+      '--val': localVolume,
+      '--min': 0,
+      '--max': 100,
+      '--pos': `calc((var(--val) - var(--min)) / (var(--max) - var(--min)) * 100%)`,
+    }"
+  >
+    <div class="volume-header">
+      <span class="volume-label">{{ $t('volumeControl.title') }}</span>
+      <Button :handleClick="toggleMute" :aria-label="isMuted ? 'speaker off' : 'speaker on'" :className="clsx('speaker', { muted: isMuted })" variant="round">
+        <LazyImage :src="`/images/speaker${isMuted ? '-muted' : ''}.svg`" :alt="`speaker${isMuted ? '-muted' : ''}`" />
+      </Button>
+    </div>
+
+    <div class="volume-slider-wrapper">
+      <input
+        type="range"
+        class="range-volume"
+        min="0"
+        max="100"
+        step="1"
+        v-model.number="localVolume"
+        @input="onVolumeChange"
+        aria-label="G³oœnoœæ"
+        list="volume-ticks"
+      />
+      <div class="volume-indicator">{{ localVolume }}%</div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useSoundStore } from '@/stores/useSoundStore';
+import { clsx } from 'clsx';
+import { storeToRefs } from 'pinia';
+import { ref, watch } from 'vue';
+
+const soundStore = useSoundStore();
+const { isMuted, volume } = storeToRefs(soundStore);
+const { toggleMute, setVolume } = soundStore;
+
+const localVolume = ref(Math.round(volume.value * 100));
+
+watch(volume, (v) => {
+  if (!isMuted.value) {
+    localVolume.value = Math.round(v * 100);
+  }
+});
+
+function onVolumeChange() {
+  setVolume(localVolume.value / 100);
+}
+</script>
+
+<style scoped src="./SidebarVolumeControl.scss" />
+
+
+src\components\Sidebar\TilePreview\TilePreview.scss
+.tile-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  &--image {
+    max-height: 32px;
+    border-radius: 4px;
+  }
+
+  &--info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &--name {
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  &--rarity {
+    font-size: 0.7rem;
+    color: var(--main-text-blue);
+  }
+}
+
+
+src\components\Sidebar\TilePreview\TilePreview.vue
+<template>
+  <div class="tile-preview">
+    <LazyImage :src="tile.imagePath" :alt="tile.name" className="tile-preview--image" />
+    <div class="tile-preview--info">
+      <span class="tile-preview--name">{{ tile.name }}</span>
+      <span class="tile-preview--rarity">{{ tile.rarity }}</span>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import './TilePreview.scss';
+defineProps<{ tile: Tile }>();
+</script>
+
+
+src\hooks\useBeforeUnloadBackup.ts
+import { useGamePersistence } from '@/hooks/useGamePersistence';
+import { useGameStore } from '@/stores/useGameStore';
+import { onMounted, onUnmounted } from 'vue';
+
+export function useBeforeUnloadBackup() {
+  const gameStore = useGameStore();
+  const { saveState } = useGamePersistence(gameStore.seed, gameStore.difficulty);
+
+  function handleUnload() {
+    saveState(gameStore.gameState);
+  }
+
+  onMounted(() => {
+    window.addEventListener('beforeunload', handleUnload);
+    window.addEventListener('pagehide', handleUnload);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('beforeunload', handleUnload);
+    window.removeEventListener('pagehide', handleUnload);
+  });
+}
+
+
+src\hooks\useCanvasLayout.ts
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import type { Ref } from 'vue';
+
+export function useCanvasLayout(canvasRef: Ref<HTMLCanvasElement | null>, tiles: Ref<Tile[]>, currentTileSize: Ref<number>) {
+  function layoutCanvas(width: number, height: number) {
+    const canvas = canvasRef.value;
+    if (!canvas) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+  }
+
+  function applyTileLayout() {
+    const container = canvasRef.value?.parentElement;
+    if (!container) return;
+
+    const tileCount = tiles.value.length;
+    const maxCols = 6;
+    const spacing = 10;
+    const padding = 20;
+
+    const cols = Math.min(maxCols, Math.ceil(Math.sqrt(tileCount)));
+    const rows = Math.ceil(tileCount / cols);
+
+    const maxWidth = container.clientWidth;
+    const maxHeight = window.innerHeight - 92 - 16 - 2;
+
+    const tileSizeByWidth = Math.floor((maxWidth - padding * 2 - spacing * (cols - 1)) / cols);
+    const tileSizeByHeight = Math.floor((maxHeight - padding * 2 - spacing * (rows - 1)) / rows);
+    const tileSize = Math.min(tileSizeByWidth, tileSizeByHeight);
+
+    currentTileSize.value = tileSize;
+
+    const totalWidth = cols * tileSize + (cols - 1) * spacing + padding * 2;
+    const totalHeight = rows * tileSize + (rows - 1) * spacing + padding * 2;
+
+    tiles.value.forEach((tile, index) => {
+      const row = Math.floor(index / cols);
+      const col = index % cols;
+      tile.x = col * (tileSize + spacing) + padding;
+      tile.y = row * (tileSize + spacing) + padding;
+    });
+
+    layoutCanvas(totalWidth, totalHeight);
+  }
+
+  return {
+    layoutCanvas,
+    applyTileLayout,
+  };
+}
+
+
+src\hooks\useCanvasRenderer.ts
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import { drawBoard } from '@/shared/utils/canvasRenderer';
+import type { Ref } from 'vue';
+
+export function useCanvasRenderer(
+  canvasRef: Ref<HTMLCanvasElement | null>,
+  tiles: Ref<Tile[]>,
+  mouseX: Ref<number>,
+  mouseY: Ref<number>,
+  hoveredTileId: Ref<number | null>,
+  tileSize: Ref<number>,
+  applyTileLayout: () => void,
+  fadeStartTime?: Ref<number | null>
+) {
+  function redrawCanvas() {
+    const canvas = canvasRef.value;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    drawBoard(ctx, canvas, tiles.value, { x: mouseX.value, y: mouseY.value }, hoveredTileId.value, tileSize.value, fadeStartTime);
+  }
+
+  function startAnimationLoop() {
+    function loop() {
+      const canvas = canvasRef.value;
+      const ctx = canvas?.getContext('2d');
+      if (canvas && ctx) {
+        tiles.value.forEach((tile) => {
+          if (tile.matched && tile.haloAngle !== undefined) {
+            tile.haloAngle = (tile.haloAngle + 0.03) % (Math.PI * 2);
+          }
+        });
+        drawBoard(ctx, canvas, tiles.value, { x: mouseX.value, y: mouseY.value }, hoveredTileId.value, tileSize.value, fadeStartTime);
+      }
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function layoutAndRedraw() {
+    applyTileLayout();
+    redrawCanvas();
+  }
+
+  return {
+    redrawCanvas,
+    startAnimationLoop,
+    layoutAndRedraw,
+  };
+}
+
+
+src\hooks\useClickLock.ts
+import { ref } from 'vue';
+
+export function useClickLock() {
+  const locked = ref(false);
+
+  function isLocked() {
+    return locked.value;
+  }
+
+  function lock() {
+    locked.value = true;
+  }
+
+  function unlock() {
+    locked.value = false;
+  }
+
+  return {
+    isLocked,
+    lock,
+    unlock,
+  };
+}
+
+
+src\hooks\useDebouncedRedraw.ts
+export function useDebouncedRedraw(layoutAndRedraw: () => void, delay = 100) {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+
+  function debouncedRedraw() {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      layoutAndRedraw();
+    }, delay);
+  }
+
+  return {
+    debouncedRedraw,
+  };
+}
+
+
+src\hooks\useDemoGame.ts
+// zak³adamy takie utilsy
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import { generateShuffledTiles } from '@/shared/utils/generateTiles';
+import { onMounted, ref } from 'vue';
+
+export function useDemoGame(onChange?: () => void) {
+  const tiles = ref<Tile[]>([]);
+  let difficulty = 0;
+
+  const flipTwoTiles = async () => {
+    const hidden = tiles.value.filter((t) => !t.flipped && !t.matched);
+    if (hidden.length < 2) return;
+
+    const [first, second] = hidden.sort(() => 0.5 - Math.random()).slice(0, 2);
+    first.flipped = true;
+    second.flipped = true;
+
+    await new Promise((r) => setTimeout(r, 1000));
+
+    if (first.name === second.name) {
+      first.matched = true;
+      second.matched = true;
+    } else {
+      first.flipped = false;
+      second.flipped = false;
+    }
+  };
+
+  const autoplay = async () => {
+    difficulty = difficulty + 1;
+    if (difficulty > 3) difficulty = 1;
+    onChange?.();
+
+    while (tiles.value.some((t) => !t.matched)) {
+      await flipTwoTiles();
+      await new Promise((r) => setTimeout(r, 600));
+    }
+
+    await new Promise((r) => setTimeout(r, 1000));
+
+    tiles.value = generateShuffledTiles('demo', difficulty);
+    onChange?.();
+    autoplay();
+  };
+
+  onMounted(() => {
+    tiles.value = generateShuffledTiles('demo', 1);
+    autoplay();
+  });
+
+  return { tiles };
+}
+
+
+src\hooks\useFormattedTime.ts
+import { computed, type Ref } from 'vue';
+
+export function useFormattedTime(seconds: Ref<number>) {
+  return computed(() => {
+    const totalSeconds = seconds.value;
+    const hrs = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+
+    const padded = (n: number) => String(n).padStart(2, '0');
+    const secsFormatted = Number.isInteger(secs) ? padded(secs) : (secs < 10 ? '0' : '') + secs.toFixed(1);
+
+    if (hrs > 0) {
+      return `${padded(hrs)}:${padded(mins)}:${secsFormatted}`;
+    }
+    return `${padded(mins)}:${secsFormatted}`;
+  });
+}
+
+
+src\hooks\useGameOverChecker.ts
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import type { Ref } from 'vue';
+
+export function useGameOverChecker(tiles: Ref<Tile[]>) {
+  function checkIfGameOver(): boolean {
+    return tiles.value.length > 0 && tiles.value.every((tile) => tile.matched);
+  }
+
+  return {
+    checkIfGameOver,
+  };
+}
+
+
+src\hooks\useGamePersistence.ts
+import type { GameState } from '@/components/GameCanvas/GameCanvas.types';
+import { useGameStateStorage } from './useGameStateStorage';
+
+export function useGamePersistence(seed: string, difficulty: number) {
+  const { save, load, clear } = useGameStateStorage();
+
+  function saveState(state: GameState) {
+    save({
+      dateStart: state.dateStart ?? new Date().toISOString(),
+      tiles: state.tiles,
+      elapsedSeconds: state.elapsedSeconds,
+      moves: state.moves,
+      seed: state.seed,
+      difficulty: state.difficulty,
+      matchedPairs: state?.matchedPairs ?? [],
+      matchCount: state?.matchCount ?? 0,
+      mismatchCount: state?.mismatchCount ?? 0,
+    });
+  }
+
+  function loadState() {
+    return load();
+  }
+
+  function clearState() {
+    clear();
+  }
+
+  return {
+    saveState,
+    loadState,
+    clearState,
+  };
+}
+
+
+src\hooks\useGameStart.ts
+import { generateShuffledTiles } from '@/shared/utils/generateTiles';
+import { preloadImagesWithAwait } from '@/shared/utils/imageCache';
+import { isDifficultyType } from '@/shared/utils/isDifficultyType';
+import { ref } from 'vue';
+
+export function useGameStart() {
+  const isLoading = ref(false);
+  const seed = ref('');
+  const difficulty = ref<number>(1);
+
+  async function startGame(payload: { seed: string; difficulty: number }) {
+    localStorage.removeItem('memory-game-state');
+    seed.value = payload.seed || Date.now().toString();
+
+    if (isDifficultyType(payload.difficulty)) {
+      difficulty.value = payload.difficulty;
+    } else {
+      console.error('Invalid difficulty type:', payload.difficulty);
+    }
+
+    const tiles = generateShuffledTiles(seed.value, difficulty.value);
+    const imagesToPreload = tiles.map((t) => t.imagePath!).filter(Boolean);
+
+    isLoading.value = true;
+
+    await preloadImagesWithAwait(imagesToPreload);
+
+    isLoading.value = false;
+    return {
+      seed: seed.value,
+      difficulty: difficulty.value,
+    };
+  }
+
+  return {
+    isLoading,
+    startGame,
+  };
+}
+
+
+src\hooks\useGameStateStorage.ts
+import type { GameState } from '@/components/GameCanvas/GameCanvas.types';
+import { useLocalStorage } from './useLocalStorage';
+
+const STORAGE_KEY = 'memory-game-state';
+
+export function useGameStateStorage() {
+  const { data: gameState, clear } = useLocalStorage<GameState | null>(STORAGE_KEY, null);
+
+  function save(state: GameState) {
+    gameState.value = {
+      dateStart: state.dateStart ?? new Date().toISOString(),
+      tiles: state.tiles,
+      elapsedSeconds: state.elapsedSeconds,
+      moves: state.moves,
+      seed: state.seed,
+      difficulty: state.difficulty,
+      matchedPairs: state?.matchedPairs ?? [],
+      matchCount: state?.matchCount ?? 0,
+      mismatchCount: state?.mismatchCount ?? 0,
+    };
+  }
+  function load(): GameState | null {
+    return gameState.value;
+  }
+
+  return {
+    gameState,
+    save,
+    load,
+    clear,
+  };
+}
+
+
+src\hooks\useLocalStorage.ts
+import { ref, watch } from 'vue';
+
+export function useLocalStorage<T>(key: string, defaultValue: T) {
+  const data = ref<T>(defaultValue);
+
+  const raw = localStorage.getItem(key);
+  if (raw) {
+    try {
+      data.value = JSON.parse(raw);
+    } catch (e) {
+      console.warn(`Cannot parse data from localStorage under key '${key}':`, e);
+    }
+  }
+
+  watch(
+    data,
+    (newVal) => {
+      localStorage.setItem(key, JSON.stringify(newVal));
+    },
+    { deep: true }
+  );
+
+  function clear() {
+    localStorage.removeItem(key);
+    data.value = defaultValue;
+  }
+
+  return {
+    data,
+    clear,
+  };
+}
+
+
+src\hooks\useMouseCanvasPosition.ts
+import type { Ref } from 'vue';
+
+export function useMouseCanvasPosition(canvasRef: Ref<HTMLCanvasElement | null>) {
+  const getMousePosition = (event: MouseEvent | TouchEvent | any) => {
+    const canvas = canvasRef.value;
+    if (!canvas) return { x: 0, y: 0 };
+
+    const rect = canvas.getBoundingClientRect();
+
+    const isTouchEvent = 'touches' in event;
+    const clientX = isTouchEvent ? event.touches[0]?.clientX : event.clientX;
+    const clientY = isTouchEvent ? event.touches[0]?.clientY : event.clientY;
+
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top,
+    };
+  };
+
+  return { getMousePosition };
+}
+
+
+src\hooks\useMouseTileHover.ts
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import { ref, type Ref } from 'vue';
+import { useThrottledDraw } from './useThrottledDraw';
+
+export function useMouseTileHover(
+  canvasRef: Ref<HTMLCanvasElement | null>,
+  tiles: Ref<Tile[]>,
+  tileSize: Ref<number>,
+  getMousePosition: (e: MouseEvent | TouchEvent) => { x: number; y: number }
+) {
+  const hoveredTileId = ref<number | null>(null);
+  const mouseX = ref(0);
+  const mouseY = ref(0);
+
+  const { triggerDraw } = useThrottledDraw(canvasRef, tiles, mouseX, mouseY, hoveredTileId, tileSize);
+
+  function handleMouseMove(e: MouseEvent | TouchEvent) {
+    const { x, y } = getMousePosition(e);
+    mouseX.value = x;
+    mouseY.value = y;
+
+    const hovered = tiles.value.find(
+      (tile) => x >= tile.x && x <= tile.x + tileSize.value && y >= tile.y && y <= tile.y + tileSize.value && !tile.matched && !tile.flipped
+    );
+
+    hoveredTileId.value = hovered?.id ?? null;
+
+    if (canvasRef.value) {
+      canvasRef.value.style.cursor = hoveredTileId.value !== null ? 'pointer' : 'default';
+    }
+
+    triggerDraw();
+  }
+
+  return {
+    hoveredTileId,
+    mouseX,
+    mouseY,
+    handleMouseMove,
+  };
+}
+
+
+src\hooks\useResizeObserver.ts
+import { onUnmounted, watch, type Ref } from 'vue';
+
+export function useResizeObserver(targetRef: Ref<HTMLElement | null>, callback: () => void) {
+  let observer: ResizeObserver | null = null;
+
+  watch(
+    targetRef,
+    (element) => {
+      if (!element) return;
+
+      observer = new ResizeObserver(() => {
+        callback();
+      });
+      observer.observe(element);
+    },
+    { immediate: true }
+  );
+
+  onUnmounted(() => {
+    if (observer && targetRef.value) {
+      observer.unobserve(targetRef.value);
+    }
+    observer = null;
+  });
+}
+
+
+src\hooks\useSoundEffects.ts
+import { sounds } from '@/shared/sounds/sounds';
+
+export function useSoundEffects() {
+  return {
+    playFlip: () => {
+      sounds.flip.play();
+      return Promise.resolve();
+    },
+    playMatch: () => {
+      sounds.match.play();
+      return Promise.resolve();
+    },
+    playFail: () => {
+      sounds.fail.play();
+      return Promise.resolve();
+    },
+    playWin: () => {
+      sounds.win.play();
+      return Promise.resolve();
+    },
+  };
+}
+
+
+src\hooks\useThrottledDraw.ts
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import { drawBoard } from '@/shared/utils/canvasRenderer';
+import type { Ref } from 'vue';
+import { ref, watchEffect } from 'vue';
+
+export function useThrottledDraw(
+  canvasRef: Ref<HTMLCanvasElement | null>,
+  tiles: Ref<Tile[]>,
+  mouseX: Ref<number>,
+  mouseY: Ref<number>,
+  hoveredTileId: Ref<number | null>,
+  tileSize: Ref<number>
+) {
+  const needsRedraw = ref(false);
+  let animationFrameId: number | null = null;
+
+  function triggerDraw() {
+    if (!needsRedraw.value) {
+      needsRedraw.value = true;
+      scheduleDraw();
+    }
+  }
+
+  function scheduleDraw() {
+    if (animationFrameId !== null) return;
+    animationFrameId = requestAnimationFrame(() => {
+      const canvas = canvasRef.value;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      drawBoard(ctx, canvas, tiles.value, { x: mouseX.value, y: mouseY.value }, hoveredTileId.value, tileSize.value);
+
+      needsRedraw.value = false;
+      animationFrameId = null;
+    });
+  }
+
+  watchEffect(() => {
+    triggerDraw();
+  });
+
+  return {
+    triggerDraw,
+  };
+}
+
+
+src\hooks\useTileEngine.ts
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import type { Ref } from 'vue';
+
+export function useTileEngine(tiles: Ref<Tile[]>, tileSize: Ref<number>) {
+  function getTileAt(x: number, y: number): Tile | null {
+    return (
+      tiles.value.find((tile) => {
+        return x >= tile.x && x <= tile.x + tileSize.value && y >= tile.y && y <= tile.y + tileSize.value && !tile.flipped && !tile.matched;
+      }) ?? null
+    );
+  }
+
+  function isMatchByName(tileA: Tile, tileB: Tile): boolean {
+    return tileA.name === tileB.name;
+  }
+
+  return {
+    getTileAt,
+    isMatchByName,
+  };
+}
+
+
+src\hooks\useTileInteractions.ts
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import { animateFlip } from '@/shared/utils/animationUtils';
+import { drawBoard } from '@/shared/utils/canvasRenderer';
+import { handleMatchPair } from '@/shared/utils/handlers/handleMatchPair';
+import { handleMismatchPair } from '@/shared/utils/handlers/handleMismatchPair';
+import { useGameStore } from '@/stores/useGameStore';
+import type { Ref } from 'vue';
+import { ref } from 'vue';
+import { useClickLock } from './useClickLock';
+import { useGameOverChecker } from './useGameOverChecker';
+import { useSoundEffects } from './useSoundEffects';
+import { useTileEngine } from './useTileEngine';
+
+interface TileInteractionCallbacks {
+  onGameOver: () => void;
+  onMatch?: (a: Tile, b: Tile) => void;
+  onMismatch?: (a: Tile, b: Tile) => void;
+}
+
+export function useTileInteractions(
+  canvasRef: Ref<HTMLCanvasElement | null>,
+  tiles: Ref<Tile[]>,
+  mouseX: Ref<number>,
+  mouseY: Ref<number>,
+  hoveredTileId: Ref<number | null>,
+  callbacks: TileInteractionCallbacks,
+  tileSize: Ref<number>
+) {
+  const { onGameOver, onMatch, onMismatch } = callbacks;
+
+  const flippedTiles = ref<Tile[]>([]);
+  const gameOver = ref(false);
+  const engine = useTileEngine(tiles, tileSize);
+  const { playFlip, playMatch, playFail, playWin } = useSoundEffects();
+  const { isLocked, lock, unlock } = useClickLock();
+  const { checkIfGameOver } = useGameOverChecker(tiles);
+  const gameStore = useGameStore();
+
+  async function flipAndRender(tile: Tile, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+    await animateFlip(tile, canvas, tileSize.value, { reverse: true });
+    tile.flipped = true;
+    flippedTiles.value.push(tile);
+    drawBoard(ctx, canvas, tiles.value, { x: mouseX.value, y: mouseY.value }, hoveredTileId.value, tileSize.value);
+    await playFlip();
+  }
+
+  async function handleClick(e: MouseEvent | TouchEvent) {
+    if (isLocked() || gameOver.value) return;
+
+    const canvas = canvasRef.value;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const isTouch = 'changedTouches' in e;
+    const clientX = isTouch ? e.changedTouches[0].clientX : (e as MouseEvent).clientX;
+    const clientY = isTouch ? e.changedTouches[0].clientY : (e as MouseEvent).clientY;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
+    const tile = engine.getTileAt(x, y);
+    if (!tile || tile.flipped || tile.matched || flippedTiles.value.length >= 2) return;
+
+    lock();
+
+    await flipAndRender(tile, canvas, ctx);
+
+    if (flippedTiles.value.length === 2) {
+      gameStore.incrementMoves();
+      const [a, b] = flippedTiles.value;
+
+      if (engine.isMatchByName(a, b)) {
+        await handleMatchPair(a, b, {
+          playMatch,
+          checkIfGameOver,
+          playWin,
+          onGameOver,
+          onMatch,
+          setGameOver: (v) => (gameOver.value = v),
+          unlock,
+        });
+        flippedTiles.value = [];
+      } else {
+        await handleMismatchPair(a, b, {
+          playFail,
+          drawBoard: () => {
+            drawBoard(ctx, canvas, tiles.value, { x: mouseX.value, y: mouseY.value }, hoveredTileId.value, tileSize.value);
+          },
+          onMismatch,
+          unlock,
+        });
+        flippedTiles.value = [];
+      }
+    } else {
+      unlock();
+    }
+  }
+
+  function resetInteractions() {
+    flippedTiles.value = [];
+    unlock();
+    gameOver.value = false;
+    gameStore.setGameOver(false);
+  }
+
+  function isGameOver() {
+    return gameOver.value;
+  }
+
+  return {
+    handleClick,
+    resetInteractions,
+    isGameOver,
+  };
+}
+
+
+src\hooks\useTimer.ts
+import { ref } from 'vue';
+
+import { useGameStore } from '@/stores/useGameStore';
+
+export function useTimer(onBackup?: () => void) {
+  const elapsed = ref(0);
+  let interval: number | null = null;
+  const gameStore = useGameStore();
+
+  function start() {
+    if (interval) return;
+    interval = window.setInterval(() => {
+      gameStore.incrementTime();
+      onBackup?.();
+    }, 1000);
+  }
+
+  function stop() {
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+    }
+  }
+
+  function reset() {
+    stop();
+    gameStore.elapsed = 0;
+  }
+
+  return {
+    elapsed,
+    start,
+    stop,
+    reset,
+  };
+}
+
+
+src\shared\components\Button\Button.model.ts
+import type { VNode } from 'vue';
+
+export enum ButtonVariant {
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+  TERTIARY = 'tertiary',
+  ROUND = 'round',
+}
+
+export type TypeButton = 'button' | 'submit' | 'reset';
+export type IButtonVariantTypes = 'primary' | 'secondary' | 'tertiary' | 'round';
+
+export interface IButtonComponent {
+  id?: string;
+  key?: string;
+  name?: string;
+  type?: TypeButton;
+  children?: string | VNode | VNode[];
+  handleClick?: (e: MouseEvent) => void;
+  active?: boolean;
+  className?: string | string[] | Record<string, boolean>;
+  tooltip?: string;
+  variant?: IButtonVariantTypes;
+  buttonsConfig?: IButtonComponent[];
+  configCustomClass?: string;
+  size?: 'xs' | 'sm' | 'lg';
+  selected?: boolean;
+  disabled?: boolean;
+  [key: string]: any;
+}
+
+
+src\shared\components\Button\Button.vue
+<template>
+  <template v-if="!props.buttonsConfig?.length">
+    <button
+      :type="props.type || 'button'"
+      :class="buttonClasses"
+      :disabled="props.disabled"
+      :aria-label="computedAriaLabel ?? ''"
+      v-bind="restAttrs"
+      @click="props.handleClick"
+    >
+      <slot>
+        <template v-if="(props?.name ?? '').length > 0">
+          {{ $t(props.name || '') }}
+        </template>
+      </slot>
+    </button>
+  </template>
+
+  <template v-else>
+    <div :class="props.configCustomClass ?? 'flex gap-8'">
+      <button
+        v-for="(btn, i) in props.buttonsConfig"
+        :key="btn.id || btn.name || `btn-${i}`"
+        :type="btn.type || 'button'"
+        :class="getButtonClasses(btn)"
+        :disabled="btn.disabled ?? false"
+        :aria-label="getAriaLabel(btn)"
+        v-bind="getRestAttrs(btn)"
+        @click="btn.handleClick"
+      >
+        <template v-if="btn.name">
+          {{ $t(btn.name) }}
+        </template>
+        <template v-else-if="btn.children">
+          <component :is="btn.children" />
+        </template>
+      </button>
+    </div>
+  </template>
+</template>
+
+<script setup lang="ts">
+import { isValidAttribute } from '@/shared/utils/safeAttributes';
+import { clsx } from 'clsx';
+import { computed, useAttrs } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { IButtonComponent } from './Button.model';
+
+const props = defineProps<IButtonComponent>();
+const restAttrs = useAttrs();
+const { t } = useI18n();
+
+const computedAriaLabelFallback = computed(() => ((props.name ?? '').length > 0 ? t(props.name || '') : 'Unnamed Button'));
+
+const computedAriaLabel = computed(() => {
+  const hasLabelledBy = 'aria-labelledby' in restAttrs && !!restAttrs['aria-labelledby'];
+  return !hasLabelledBy ? String(restAttrs['aria-label'] ?? computedAriaLabelFallback.value) : '';
+});
+
+const getButtonClasses = (btn: IButtonComponent) => {
+  const variantClasses = {
+    primary: 'primary',
+    secondary: 'secondary',
+    tertiary: 'tertiary',
+    round: 'round rounded-full',
+  };
+
+  const sizeClasses = {
+    xs: btn.variant === 'round' ? 'text-sm h-6 w-6' : 'text-xs px-1 py-1',
+    sm: btn.variant === 'round' ? 'text-base h-8 w-8' : 'text-sm px-3 py-2',
+    lg: btn.variant === 'round' ? 'text-xl h-12 w-12' : 'text-base px-4 py-3',
+  };
+
+  return clsx([
+    'button-component',
+    variantClasses[btn.variant || 'primary'],
+    sizeClasses[btn.size || 'sm'],
+    btn.disabled ? 'bg-gray text-disabled cursor-not-allowed' : '',
+    typeof btn.className === 'string' ? btn.className : clsx(btn.className),
+    { active: btn.active },
+  ]);
+};
+
+const buttonClasses = computed(() => getButtonClasses(props));
+
+const getAriaLabel = (btn: IButtonComponent) => {
+  const hasLabelledBy = 'aria-labelledby' in btn && !!btn['aria-labelledby'];
+  return !hasLabelledBy ? (btn['aria-label'] ?? (btn.name ? t(btn.name) : 'Unnamed Button')) : undefined;
+};
+
+const getRestAttrs = (btn: IButtonComponent) => {
+  const {
+    id,
+    key,
+    name,
+    type,
+    handleClick,
+    active,
+    className,
+    tooltip,
+    variant,
+    buttonsConfig,
+    configCustomClass,
+    size,
+    selected,
+    disabled,
+    children,
+    ...rest
+  } = btn;
+
+  const safeAttrs: Record<string, any> = {};
+  for (const [k, v] of Object.entries(rest)) {
+    if (isValidAttribute(k)) {
+      safeAttrs[k] = v;
+    }
+  }
+  return safeAttrs;
+};
+</script>
+
+
+src\shared\components\CollapsiblePanel\CollapsiblePanel.model.ts
+export interface ICollapsiblePanel {
+  title: string;
+  size?: 'xs' | 'sm' | 'lg';
+}
+
+
+src\shared\components\CollapsiblePanel\CollapsiblePanel.scss
+@import '@scss/extend';
+
+.collapsible {
+  border: 1px solid var(--main-border-gray);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: var(--main-bg-white);
+
+  @extend %shared-box-shadow;
+
+  & .arrow-icon {
+    width: 1rem;
+    height: 1rem;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+
+    &.rotated {
+      transform: rotate(180deg);
+    }
+  }
+
+  & .fade-enter-active,
+  & .fade-leave-active {
+    transition: all 0.3s ease;
+  }
+
+  & .fade-enter-from,
+  & .fade-leave-to {
+    opacity: 0;
+    transform: scaleY(0.95);
+  }
+
+  &-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--main-text-primary);
+    background-color: var(--main-bg-secondary);
+    border: none;
+    cursor: pointer;
+    gap: 0.5rem;
+  }
+
+  &-content {
+    padding: var(--spacing-md);
+    background-color: var(--main-bg-white);
+    color: var(--main-text-primary);
+  }
+
+  &.xs {
+    & .collapsible-header {
+      padding: 4px;
+    }
+  }
+
+  &.sm {
+    & .collapsible-header {
+      padding: 8px;
+    }
+  }
+
+  &.lg {
+    & .collapsible-header {
+      padding: 12px;
+    }
+  }
+}
+
+
+src\shared\components\CollapsiblePanel\CollapsiblePanel.vue
+<template>
+  <div class="collapsible" :class="props?.size ?? 'sm'">
+    <Button className="collapsible-header" :size="props?.size ?? 'sm'" :handleClick="() => (isOpen = !isOpen)">
+      <span>{{ props?.title ?? '' }}</span>
+      <VIcon name="fa-chevron-down" :class="{ rotated: isOpen }" class="arrow-icon" />
+    </Button>
+
+    <transition name="fade">
+      <div v-show="isOpen" class="collapsible-content">
+        <slot />
+      </div>
+    </transition>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import type { ICollapsiblePanel } from './CollapsiblePanel.model';
+import './CollapsiblePanel.scss';
+
+const props = defineProps<ICollapsiblePanel>();
+const isOpen = ref(false);
+</script>
+
+
+src\shared\components\InputField\InputField.scss
+.input-field {
+  margin-bottom: var(--spacing-md);
+
+  .input-label {
+    display: block;
+    font-size: var(--font-size-base);
+    color: var(--main-text-placeholder);
+  }
+
+  .input-element {
+    width: 100%;
+    margin-top: 4px;
+    padding: 8px;
+    border: 1px solid var(--main-border-gray);
+    border-radius: 8px;
+    outline: none;
+
+    &:focus {
+      border-color: var(--main-border-blue);
+      box-shadow: 0 0 0 2px rgb(9 113 254 / 20%);
+    }
+  }
+
+  .input-description {
+    font-size: 0;
+  }
+}
+
+
+src\shared\components\InputField\InputField.vue
+<template>
+  <div class="input-field">
+    <label :for="id" class="input-label">{{ label }}</label>
+    <input :id="id" type="text" :placeholder="placeholder" :aria-describedby="describedby" v-model="inputValue" class="input-element" />
+    <p v-if="description" :id="describedby" class="input-description">{{ description }}</p>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+
+const props = defineProps<{
+  id: string;
+  label: string;
+  placeholder?: string;
+  description?: string;
+  modelValue: string;
+  describedby?: string;
+}>();
+
+const emit = defineEmits(['update:modelValue']);
+
+const inputValue = computed({
+  get: () => props.modelValue,
+  set: (value: string) => emit('update:modelValue', value),
+});
+</script>
+
+<style scoped src="./InputField.scss" />
+
+
+src\shared\components\LazyImage\LazyImage.scss
+.img-fluid {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  transition:
+    opacity 0.3s ease-in-out,
+    transform 0.3s ease-in-out;
+  will-change: opacity, transform;
+  position: relative;
+  z-index: 2;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #e0e0e0 0%, #f0f0f0 50%, #e0e0e0 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  &.lazyloaded::before {
+    display: none;
+  }
+}
+
+.lazyloading {
+  opacity: 0;
+  transform: scale(0.95);
+  filter: blur(2px);
+  background-color: #e0e0e0;
+  transition: all 0.3s ease-in-out;
+}
+
+.lazyloaded {
+  opacity: 1;
+  transform: scale(1);
+  filter: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.lazy-placeholder {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(90deg, #ccc 25%, #ddd 37%, #ccc 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+  border-radius: 8px;
+  z-index: 0;
+  position: relative;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+
+src\shared\components\LazyImage\LazyImage.vue
+<template>
+  <div v-if="!loaded" class="lazy-placeholder" data-testid="lazy-placeholder" aria-hidden="true" />
+  <img
+    :id="id"
+    loading="lazy"
+    :src="error || !src ? defaultLogo : src"
+    :alt="alt"
+    ref="imgRef"
+    :class="clsx('img-fluid', className ?? '', { lazyloaded: loaded, lazyloading: !loaded })"
+    @load="onLoad"
+    @error="onError"
+    @click="onClick"
+  />
+</template>
+
+<script setup lang="ts">
+import { clsx } from 'clsx';
+import { onMounted, onUnmounted, ref } from 'vue';
+
+defineProps<{
+  id?: string;
+  className?: string;
+  src?: string | null;
+  alt?: string;
+  onClick?: () => void;
+}>();
+
+const defaultLogo = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg';
+
+const loaded = ref(false);
+const error = ref(false);
+const imgRef = ref<HTMLImageElement | null>(null);
+
+function onLoad() {
+  loaded.value = true;
+}
+function onError() {
+  error.value = true;
+}
+
+onMounted(() => {
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        observer.disconnect();
+      }
+    },
+    { threshold: 0.1 }
+  );
+
+  if (imgRef.value) observer.observe(imgRef.value);
+  onUnmounted(() => observer.disconnect());
+});
+</script>
+
+<style scoped src="./LazyImage.scss" />
+
+
+src\shared\components\SelectField\SelectField.scss
+.select-field {
+  margin-bottom: var(--spacing-md);
+
+  .select-label {
+    display: block;
+    font-size: var(--font-size-base);
+    color: var(--main-text-placeholder);
+  }
+
+  .select-element {
+    width: 100%;
+    margin-top: 4px;
+    padding: 8px;
+    border: 1px solid var(--main-border-gray);
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+
+    &:focus {
+      border-color: var(--main-border-blue);
+      box-shadow: 0 0 0 2px rgb(9 113 254 / 20%);
+    }
+  }
+
+  .select-description {
+    font-size: 0;
+  }
+}
+
+
+src\shared\components\SelectField\SelectField.vue
+<template>
+  <div class="select-field">
+    <label :for="id" class="select-label">{{ label ?? '' }}</label>
+    <select :id="id" :aria-describedby="describedby" v-model.number="selectValue" class="select-element">
+      <option v-for="option in options" :key="option.id" :value="option.id" class="select-option">
+        {{ option.displayName }}
+      </option>
+    </select>
+    <p v-if="description" :id="describedby" class="select-description">{{ description }}</p>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+
+const props = defineProps<{
+  id: string;
+  label: string;
+  description?: string;
+  describedby?: string;
+  options: { id: number | string; displayName: string }[];
+  modelValue: number;
+}>();
+
+const emit = defineEmits(['update:modelValue']);
+
+const selectValue = computed({
+  get: () => props.modelValue,
+  set: (value: number) => emit('update:modelValue', value),
+});
+</script>
+
+<style scoped src="./SelectField.scss" />
+
+
+src\shared\components\Spinner\Spinner.scss
+.spinner {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(255 255 255 / 60%);
+
+  &-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &-loader {
+    animation: spin 0.8s linear infinite;
+  }
+
+  &-text {
+    font-size: 1rem;
+    text-align: center;
+    color: var(--main-text-blue, #333);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+src\shared\components\Spinner\Spinner.vue
+<template>
+  <div role="status" :aria-label="ariaLabel" aria-busy="true" class="spinner">
+    <div class="spinner-inner">
+      <div class="spinner-loader" :style="loaderStyle" />
+      <p class="spinner-text">{{ ariaLabel }}</p>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+
+interface SpinnerProps {
+  size?: 'small' | 'medium' | 'large';
+  color?: string;
+  ariaLabel?: string;
+}
+
+const props = withDefaults(defineProps<SpinnerProps>(), {
+  size: 'medium',
+  color: '#007bff',
+  ariaLabel: 'Loading...',
+});
+
+const sizes = {
+  small: '20px',
+  medium: '40px',
+  large: '60px',
+};
+
+const loaderStyle = computed(() => ({
+  width: sizes[props.size],
+  height: sizes[props.size],
+  border: `4px solid ${props.color}`,
+  borderTopColor: 'transparent',
+  borderRadius: '50%',
+}));
+</script>
+
+<style scoped src="./Spinner.scss" />
+
+
+src\shared\sounds\sounds.ts
+import { Howl } from 'howler';
+
+export const sounds = {
+  flip: new Howl({ src: ['/sounds/flip.mp3'] }),
+  match: new Howl({ src: ['/sounds/match.mp3'] }),
+  fail: new Howl({ src: ['/sounds/fail.mp3'] }),
+  win: new Howl({ src: ['/sounds/win.mp3'] }),
+};
+
+
+src\shared\types\difficultyTypes.ts
+export type DifficultyType = 'easy' | 'medium' | 'hard';
+
+
+src\shared\utils\animationUtils.ts
+import { colors } from '@/components/GameCanvas/GameCanvas.const';
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import { drawTileWithFlip } from './canvasRenderer';
+
+export function animateFlip(tile: Tile, canvas: HTMLCanvasElement, size = 100, options: { reverse?: boolean } = {}): Promise<void> {
+  return new Promise((resolve) => {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return resolve();
+
+    const frames = 10;
+    const { x, y } = tile;
+    let frame = 0;
+
+    function step() {
+      if (!ctx) return resolve();
+      const progress = options.reverse ? 1 - frame / frames : frame / frames;
+      ctx.clearRect(x - 2, y - 2, size + 4, size + 4);
+      drawTileWithFlip(ctx, tile, progress, size);
+
+      if (++frame <= frames) {
+        requestAnimationFrame(step);
+      } else {
+        h;
+        resolve();
+      }
+    }
+
+    step();
+  });
+}
+
+export function drawBoardWithSingleTile(tile: Tile, progress: number, tiles: Tile[], canvas: HTMLCanvasElement): void {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = colors.lightGray;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  for (const t of tiles) {
+    if (t.id === tile.id) {
+      drawTileWithFlip(ctx, t, progress);
+    } else {
+      drawTileWithFlip(ctx, t, t.flipped || t.matched ? 1 : 0);
+    }
+  }
+}
+
+
+src\shared\utils\canvasRenderer.ts
+import { colors, RarityBorders, RarityColors } from '@/components/GameCanvas/GameCanvas.const';
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import { preloadedImages } from '@/shared/utils/imageCache';
+import { drawRoundedRect } from './drawRoundedRect';
+
+function getAnimatedStrokeGradient(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  angle: number,
+  baseColor: string
+): CanvasGradient {
+  const radiusX = width / 2;
+  const radiusY = height / 2;
+  const cx = x + radiusX;
+  const cy = y + radiusY;
+
+  const offsetX = Math.cos(angle) * radiusX;
+  const offsetY = Math.sin(angle) * radiusY;
+
+  const gradient = ctx.createLinearGradient(cx - offsetX, cy - offsetY, cx + offsetX, cy + offsetY);
+
+  gradient.addColorStop(0, baseColor);
+  gradient.addColorStop(0.5, 'white');
+  gradient.addColorStop(1, baseColor);
+
+  return gradient;
+}
+
+function drawTileFrame(ctx: CanvasRenderingContext2D, tile: Tile, tileWidth: number, tileHeight: number, isHovered: boolean) {
+  const baseColor = RarityBorders[tile.rarity];
+  const angle = tile.matched && tile.haloAngle !== undefined ? tile.haloAngle : 0;
+
+  if (tile.matched && tile.haloAngle !== undefined) {
+    ctx.strokeStyle = getAnimatedStrokeGradient(ctx, tile.x, tile.y, tileWidth, tileHeight, angle, baseColor);
+  } else {
+    ctx.strokeStyle = baseColor;
+  }
+
+  ctx.lineWidth = isHovered ? 8 : 5;
+  drawRoundedRect(ctx, tile.x + 1, tile.y + 1, tileWidth - 2, tileHeight - 2, 10);
+  ctx.stroke();
+}
+
+export function drawTileWithFlip(ctx: CanvasRenderingContext2D, tile: Tile, progress: number, size = 100) {
+  const tileWidth = size;
+  const tileHeight = size;
+
+  const centerX = tile.x + tileWidth / 2;
+  const centerY = tile.y + tileHeight / 2;
+
+  ctx.save();
+  ctx.translate(centerX, centerY);
+  ctx.scale(1 - 2 * Math.abs(progress - 0.5), 1);
+  ctx.translate(-centerX, -centerY);
+
+  if (tile.flipped || tile.matched) {
+    const gradient = ctx.createLinearGradient(tile.x, tile.y, tile.x + tileWidth, tile.y + tileHeight);
+    gradient.addColorStop(0, RarityColors[tile.rarity]);
+    gradient.addColorStop(1, colors.darkBlue);
+    ctx.fillStyle = gradient;
+    drawRoundedRect(ctx, tile.x, tile.y, tileWidth, tileHeight, 10);
+    ctx.fill();
+
+    if (tile.imagePath && progress > 0.5) {
+      const img = preloadedImages[tile.imagePath];
+      if (img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+        ctx.drawImage(img, tile.x + size * 0.1, tile.y + size * 0.1, size * 0.8, size * 0.8);
+      }
+    }
+
+    ctx.strokeStyle = RarityBorders[tile.rarity];
+
+    drawTileFrame(ctx, tile, tileWidth, tileHeight, false);
+
+    ctx.fillStyle = colors.tonedBlack;
+    const textSize = Math.floor(size * 0.07);
+    ctx.font = `${textSize}px Roboto`;
+    ctx.fillText(tile.name.split('|')[0], tile.x + size * 0.05, tile.y + size - size * 0.05);
+  } else {
+    ctx.fillStyle = colors.darkBlue;
+    drawRoundedRect(ctx, tile.x, tile.y, tileWidth, tileHeight, 10);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+export function drawBoard(
+  ctx: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
+  tiles: Tile[],
+  mouse: { x: number; y: number },
+  hoveredId: number | null,
+  tileSize = 100,
+  fadeStartTime?: Ref<number | null>
+) {
+  const now = Date.now();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = colors.lightGray;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  tiles.forEach((tile) => {
+    const centerX = tile.x + tileSize / 2;
+    const centerY = tile.y + tileSize / 2;
+    const isHovered = hoveredId === tile.id;
+
+    let alpha = 1;
+    if (fadeStartTime?.value) {
+      const elapsed = now - fadeStartTime.value;
+      const fadeInDuration = 600; // ms
+      alpha = Math.min(1, elapsed / fadeInDuration);
+    }
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(centerX, centerY);
+    ctx.translate(-centerX, -centerY);
+
+    if (isHovered) {
+      ctx.shadowColor = colors.shadowColor;
+      ctx.shadowBlur = 16;
+    } else {
+      ctx.shadowBlur = 0;
+    }
+
+    if (tile.matched || tile.flipped) {
+      const gradient = ctx.createLinearGradient(tile.x, tile.y, tile.x + tileSize, tile.y + tileSize);
+      gradient.addColorStop(0, RarityColors[tile.rarity]);
+      gradient.addColorStop(1, colors.darkBlue);
+      ctx.fillStyle = gradient;
+      drawRoundedRect(ctx, tile.x, tile.y, tileSize, tileSize, 10);
+      ctx.fill();
+
+      const img = preloadedImages[tile.imagePath!];
+      if (img && img.complete && img.naturalWidth > 0) {
+        const offsetX = (mouse.x - centerX) * 0.02;
+        const offsetY = (mouse.y - centerY) * 0.02;
+        ctx.drawImage(img, tile.x + tileSize * 0.1 + offsetX, tile.y + tileSize * 0.1 + offsetY, tileSize * 0.8, tileSize * 0.8);
+      }
+
+      ctx.strokeStyle = RarityBorders[tile.rarity];
+      drawTileFrame(ctx, tile, tileSize, tileSize, isHovered);
+
+      ctx.fillStyle = colors.lightGray;
+      const textSize = Math.floor(tileSize * 0.08);
+      ctx.font = `${textSize}px Roboto`;
+      ctx.shadowColor = colors.gray;
+      ctx.shadowBlur = 4;
+      ctx.shadowOffsetX = 1;
+      ctx.shadowOffsetY = 1;
+      ctx.fillText(tile.name.split('|')[0], tile.x + tileSize * 0.05, tile.y + tileSize - tileSize * 0.05);
+    } else {
+      ctx.fillStyle = colors.darkBlue;
+      drawRoundedRect(ctx, tile.x, tile.y, tileSize, tileSize, 10);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  });
+}
+
+
+src\shared\utils\drawRoundedRect.ts
+export function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+
+src\shared\utils\formatDate.ts
+export function formatDate(iso: string) {
+  return new Date(iso).toLocaleString('pl-PL');
+}
+
+
+src\shared\utils\generateTiles.ts
+import { weapons } from '@/components/GameCanvas/GameCanvas.const';
+import type { Skin, Tile } from '@/components/GameCanvas/GameCanvas.types';
+import { getRandomRarity } from './getRandomRarity';
+import { preloadImagesSync } from './imageCache';
+
+export const skins: Skin[] =
+  weapons?.map((name, index) => ({
+    id: index,
+    name: name?.toUpperCase(),
+    imagePath: `/images/weapons/${name.replace(/ /g, '_')}.png`,
+    rarity: getRandomRarity(),
+  })) ?? [];
+
+preloadImagesSync(skins.map((skin) => skin.imagePath));
+
+function xmur3(str: string): () => number {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  return function () {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    h ^= h >>> 16;
+    return (h >>> 0) / 4294967296;
+  };
+}
+
+function shuffleArray<T>(array: T[], seed: string): T[] {
+  const rng = xmur3(seed);
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+export const generateShuffledTiles = (seed: string, difficulty: number): Tile[] => {
+  const tiles: Tile[] = [];
+  const numPairs = difficulty === 1 ? 6 : difficulty === 2 ? 10 : 15;
+
+  const selectedSkins = shuffleArray(skins, seed).slice(0, numPairs);
+
+  selectedSkins.forEach((skin, index) => {
+    const pairId = index;
+    for (let i = 0; i < 2; i++) {
+      tiles.push({
+        id: tiles.length,
+        name: skin.name,
+        pairId,
+        flipped: false,
+        matched: false,
+        x: 0,
+        y: 0,
+        rarity: skin.rarity,
+        imagePath: skin.imagePath,
+      });
+    }
+  });
+
+  const shuffled = shuffleArray(tiles, seed);
+
+  const cols = 6;
+  const spacing = 110;
+  shuffled.forEach((tile, index) => {
+    const row = Math.floor(index / cols);
+    const col = index % cols;
+    tile.x = col * spacing + 20;
+    tile.y = row * spacing + 20;
+  });
+
+  return shuffled;
+};
+
+
+src\shared\utils\getRandomRarity.ts
+import { rarities } from '@/components/GameCanvas/GameCanvas.const';
+import type { Rarity } from '@/components/GameCanvas/GameCanvas.types';
+
+export const getRandomRarity = (): Rarity => {
+  const index = Math.floor(Math.random() * rarities.length);
+  return rarities[index];
+};
+
+
+src\shared\utils\imageCache.ts
+export const preloadedImages: Record<string, HTMLImageElement> = {};
+
+export function preloadImagesSync(paths: string[]) {
+  paths.forEach((path) => {
+    const lowerPath = path.toLowerCase();
+    if (!preloadedImages[lowerPath]) {
+      const img = new Image();
+      img.src = path;
+
+      img.onerror = () => {
+        console.warn(`Image preload failed: ${path}`);
+        delete preloadedImages[lowerPath];
+      };
+
+      preloadedImages[lowerPath] = img;
+    }
+  });
+}
+
+export async function preloadImagesWithAwait(paths: string[]) {
+  const promises = paths.map((path) => {
+    const lowerPath = path.toLowerCase();
+
+    return new Promise<void>((resolve) => {
+      if (preloadedImages[lowerPath]) {
+        const img = preloadedImages[lowerPath];
+        if (img.complete) return resolve();
+        img.onload = () => resolve();
+        img.onerror = () => {
+          console.warn(`Image preload failed: ${path}`);
+          delete preloadedImages[lowerPath];
+          resolve();
+        };
+      } else {
+        const img = new Image();
+        img.src = path;
+        preloadedImages[lowerPath] = img;
+
+        if (img.complete) return resolve();
+
+        img.onload = () => resolve();
+        img.onerror = () => {
+          console.warn(`Image preload failed: ${path}`);
+          delete preloadedImages[lowerPath];
+          resolve();
+        };
+      }
+    });
+  });
+
+  await Promise.all(promises);
+}
+
+
+src\shared\utils\isDifficultyType.ts
+export function isDifficultyType(difficulty: number): boolean {
+  const validDifficulties: number[] = [1, 2, 3];
+  return validDifficulties.includes(difficulty);
+}
+
+
+src\shared\utils\lightenColor.ts
+export function lightenColor(hex: string, amount = 0.2): string {
+  const clamp = (v: number) => Math.min(255, Math.max(0, v));
+  const [r, g, b] = hex
+    .replace('#', '')
+    .match(/.{2}/g)!
+    .map((c) => parseInt(c, 16));
+  const lighter = [r, g, b].map((v) => clamp(Math.floor(v + (255 - v) * amount)));
+  return `rgb(${lighter.join(',')})`;
+}
+
+
+src\shared\utils\safeAttributes.ts
+export function isValidAttribute(attr: string): boolean {
+  if (!attr || typeof attr !== 'string') return false;
+  if (attr.trim() === '') return false;
+  if (/["<>\\\s]/.test(attr)) return false;
+  if (attr.startsWith('"')) return false;
+  return true;
+}
+
+
+src\shared\utils\throttle.ts
+export function throttle<T extends (...args: any[]) => any>(fn: T, limit = 30000): T {
+  let lastCall = 0;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+
+  return function (...args: any[]) {
+    const now = Date.now();
+    if (now - lastCall >= limit) {
+      lastCall = now;
+      fn(...args);
+    } else if (!timeout) {
+      timeout = setTimeout(
+        () => {
+          lastCall = Date.now();
+          fn(...args);
+          timeout = null;
+        },
+        limit - (now - lastCall)
+      );
+    }
+  } as T;
+}
+
+
+src\shared\utils\timeStamp.ts
+export function getTimeStamp(date: string): number {
+  return date ? Date.now() - new Date(date).getTime() : 0;
+}
+
+
+src\shared\utils\handlers\handleMatchPair.ts
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import { useGameStore } from '@/stores/useGameStore';
+
+interface HandleMatchPairOptions {
+  playMatch: () => Promise<void>;
+  checkIfGameOver: () => boolean;
+  playWin: () => Promise<void>;
+  onGameOver: () => void;
+  onMatch?: (a: Tile, b: Tile) => void;
+  setGameOver: (value: boolean) => void;
+  unlock: () => void;
+}
+
+export async function handleMatchPair(a: Tile, b: Tile, opts: HandleMatchPairOptions) {
+  a.matched = true;
+  b.matched = true;
+  a.haloAngle = 0;
+  b.haloAngle = 0;
+
+  if (opts.onMatch) opts.onMatch(a, b);
+
+  await opts.playMatch();
+
+  useGameStore().incrementMatch(a, b);
+
+  if (opts.checkIfGameOver()) {
+    await opts.playWin();
+    opts.setGameOver(true);
+    opts.onGameOver();
+  }
+
+  opts.unlock();
+}
+
+
+src\shared\utils\handlers\handleMismatchPair.ts
+import type { Tile } from '@/components/GameCanvas/GameCanvas.types';
+import { useGameStore } from '@/stores/useGameStore';
+
+interface HandleMismatchPairOptions {
+  playFail: () => Promise<void>;
+  drawBoard: () => void;
+  onMismatch?: (a: Tile, b: Tile) => void;
+  unlock: () => void;
+}
+
+export async function handleMismatchPair(a: Tile, b: Tile, opts: HandleMismatchPairOptions) {
+  await opts.playFail();
+
+  if (opts.onMismatch) opts.onMismatch(a, b);
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  a.flipped = false;
+  b.flipped = false;
+
+  opts.drawBoard();
+
+  opts.unlock();
+  useGameStore().incrementMismatch(a, b);
+}
+
+
+src\stores\useGameHistoryStore.ts
+import type { GameHistoryEntry } from '@/components/GameCanvas/GameCanvas.types';
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
+
+const STORAGE_KEY = 'memory-game-history';
+
+export const useGameHistoryStore = defineStore('gameHistory', () => {
+  const history = ref<GameHistoryEntry[]>([]);
+
+  function loadFromStorage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      history.value = raw ? JSON.parse(raw) : [];
+    } catch {
+      history.value = [];
+    }
+  }
+
+  function addEntry(entry: GameHistoryEntry) {
+    history.value.unshift(entry);
+    history.value = history.value.slice(0, 10);
+    saveToStorage();
+  }
+
+  function clearHistory() {
+    history.value = [];
+    saveToStorage();
+  }
+
+  function saveToStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history.value));
+  }
+
+  const stats = computed(() => {
+    const games = history.value.length;
+    const avgTime = games ? Math.round(history.value.reduce((a, e) => a + e.time, 0) / games) : 0;
+    const avgMoves = games ? Math.round(history.value.reduce((a, e) => a + e.moves, 0) / games) : 0;
+    return { games, avgTime, avgMoves };
+  });
+
+  return {
+    history,
+    addEntry,
+    clearHistory,
+    loadFromStorage,
+    stats,
+  };
+});
+
+
+src\stores\useGameStore.ts
+import type { GameState, MatchRecord, Tile } from '@/components/GameCanvas/GameCanvas.types';
+import { generateShuffledTiles } from '@/shared/utils/generateTiles';
+import { isDifficultyType } from '@/shared/utils/isDifficultyType';
+import { getTimeStamp } from '@/shared/utils/timeStamp';
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
+
+export const useGameStore = defineStore('game', () => {
+  const dateStart = ref<string | null>(null);
+  const seed = ref('');
+  const difficulty = ref(1);
+  const tiles = ref<Tile[]>([]);
+  const moves = ref(0);
+  const elapsed = ref(0);
+  const matchCount = ref(0);
+  const mismatchCount = ref(0);
+  const matchedPairs = ref<MatchRecord[]>([]);
+  const gameStarted = ref(false);
+  const gameOver = ref(false);
+  const sidebarVisible = ref(true);
+  const devPanelVisible = ref(false);
+
+  function startGame(payload: { seed: string; difficulty: number }) {
+    const newSeed = payload.seed?.trim() || Date.now().toString();
+    const newDifficulty = isDifficultyType(payload.difficulty) ? payload.difficulty : 1;
+
+    seed.value = newSeed;
+    difficulty.value = newDifficulty;
+
+    const generatedTiles = generateShuffledTiles(newSeed, newDifficulty);
+    tiles.value = generatedTiles;
+    moves.value = 0;
+    elapsed.value = 0;
+    gameOver.value = false;
+    gameStarted.value = true;
+    matchedPairs.value = [];
+    matchCount.value = 0;
+    mismatchCount.value = 0;
+    dateStart.value = new Date().toISOString();
+  }
+
+  function restartGame() {
+    const generatedTiles = generateShuffledTiles(seed.value, difficulty.value);
+    tiles.value = generatedTiles;
+    moves.value = 0;
+    elapsed.value = 0;
+    gameOver.value = false;
+    matchedPairs.value = [];
+    matchCount.value = 0;
+    mismatchCount.value = 0;
+  }
+
+  function restoreGame(state: GameState) {
+    dateStart.value = state.dateStart ?? null;
+    seed.value = state.seed;
+    difficulty.value = state.difficulty;
+    tiles.value = state.tiles;
+    elapsed.value = state.elapsedSeconds;
+    moves.value = state.moves;
+    gameStarted.value = true;
+    gameOver.value = false;
+    matchedPairs.value = state?.matchedPairs ?? [];
+    matchCount.value = state?.matchCount ?? 0;
+    mismatchCount.value = state?.mismatchCount ?? 0;
+  }
+
+  function incrementMatch(a: Tile, b: Tile) {
+    const { haloAngle: haloAngleA, ...restA } = a ?? {};
+    const { haloAngle: haloAngleB, ...restB } = b ?? {};
+    matchCount.value++;
+    const timestamp = getTimeStamp(dateStart.value as string);
+    matchedPairs.value.push({ a: restA, b: restB, result: 'match', timestamp });
+  }
+
+  function incrementMismatch(a: Tile, b: Tile) {
+    const { haloAngle: haloAngleA, ...restA } = a ?? {};
+    const { haloAngle: haloAngleB, ...restB } = b ?? {};
+    mismatchCount.value++;
+    const timestamp = getTimeStamp(dateStart.value as string);
+    matchedPairs.value.push({ a: restA, b: restB, result: 'mismatch', timestamp });
+  }
+
+  function resetStats() {
+    matchCount.value = 0;
+    mismatchCount.value = 0;
+    matchedPairs.value = [];
+  }
+
+  function incrementMoves() {
+    moves.value++;
+  }
+
+  function incrementTime() {
+    elapsed.value++;
+  }
+
+  function setGameOver(val: boolean) {
+    gameOver.value = val;
+  }
+
+  function setGameStarted(val: boolean) {
+    gameStarted.value = val;
+  }
+
+  function toggleDevPanel() {
+    devPanelVisible.value = !devPanelVisible.value;
+  }
+
+  function toggleSidebar(val?: boolean) {
+    if (typeof val === 'boolean') sidebarVisible.value = val;
+    else sidebarVisible.value = !sidebarVisible.value;
+  }
+
+  const gameState = computed(() => ({
+    dateStart: dateStart.value,
+    tiles: tiles.value,
+    elapsedSeconds: elapsed.value,
+    moves: moves.value,
+    seed: seed.value,
+    difficulty: difficulty.value,
+    matchCount: matchCount.value ?? 0,
+    mismatchCount: mismatchCount.value ?? 0,
+    matchedPairs: matchedPairs.value ?? [],
+  }));
+
+  return {
+    dateStart,
+    seed,
+    difficulty,
+    tiles,
+    moves,
+    elapsed,
+    gameStarted,
+    gameOver,
+    startGame,
+    restartGame,
+    restoreGame,
+    incrementMoves,
+    incrementTime,
+    matchCount,
+    mismatchCount,
+    matchedPairs,
+    incrementMatch,
+    incrementMismatch,
+    resetStats,
+    setGameOver,
+    setGameStarted,
+    gameState,
+    devPanelVisible,
+    toggleDevPanel,
+    sidebarVisible,
+    toggleSidebar,
+  };
+});
+
+
+src\stores\useSoundStore.ts
+import { Howler } from 'howler';
+import { defineStore } from 'pinia';
+import { ref, watch } from 'vue';
+
+export const useSoundStore = defineStore('sound', () => {
+  const isMuted = ref(false);
+  const volume = ref(1);
+
+  watch(
+    [isMuted, volume],
+    ([muted, vol]) => {
+      Howler.volume(muted ? 0 : vol);
+    },
+    { immediate: true }
+  );
+
+  function toggleMute() {
+    isMuted.value = !isMuted.value;
+  }
+
+  function setVolume(v: number): void {
+    volume.value = Math.max(0, Math.min(1, v));
+  }
+
+  return {
+    isMuted,
+    volume,
+    toggleMute,
+    setVolume,
+  };
+});
+
+

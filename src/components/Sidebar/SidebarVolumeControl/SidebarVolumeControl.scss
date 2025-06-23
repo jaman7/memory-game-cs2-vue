@@ -27,20 +27,6 @@ $padding: 0.25rem;
   &-slider-wrapper {
     position: relative;
   }
-
-  &-indicator {
-    position: absolute;
-    top: -1.8rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--main-bg-orange);
-    color: white;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.4rem;
-
-    @extend %shared-box-shadow;
-  }
 }
 
 .range {

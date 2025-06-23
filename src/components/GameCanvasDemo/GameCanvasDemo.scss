@@ -1,5 +1,15 @@
 @import '@scss/extend';
 
+$rarity-colors: (
+  consumer: #999,
+  industrial: #5a9bd4,
+  milspec: #4b6cb7,
+  restricted: #cf6ccf,
+  classified: #f55,
+  covert: #f2b01e,
+);
+$dark-blue: #0860d8;
+
 @keyframes halo-spin {
   0% {
     background-position: 0% 50%;
@@ -97,12 +107,33 @@
         transform: rotateY(0deg);
       }
 
-      &.flipped .tile-front {
-        transform: rotateY(0deg);
+      &.flipped {
+        & .tile-front {
+          transform: rotateY(0deg);
+        }
+
+        & .tile-back {
+          transform: rotateY(-180deg);
+        }
       }
 
-      &.flipped .tile-back {
-        transform: rotateY(-180deg);
+      &.flipped,
+      &.matched {
+        @each $rarity, $color in $rarity-colors {
+          & .rarity-#{$rarity} {
+            background: linear-gradient(135deg, #{$color}, #{$dark-blue});
+          }
+        }
+      }
+
+      &.matched {
+        @each $rarity, $color in $rarity-colors {
+          & .rarity-border-#{$rarity} {
+            background: linear-gradient(90deg, #{$color}, #{$dark-blue});
+
+            @include halo-border($color);
+          }
+        }
       }
 
       & .tile-name {
@@ -115,35 +146,6 @@
 
         @extend %text-shadow;
       }
-    }
-  }
-}
-
-$rarity-colors: (
-  consumer: #999,
-  industrial: #5a9bd4,
-  milspec: #4b6cb7,
-  restricted: #cf6ccf,
-  classified: #f55,
-  covert: #f2b01e,
-);
-$dark-blue: #0860d8;
-
-.tile.flipped,
-.tile.matched {
-  @each $rarity, $color in $rarity-colors {
-    & .rarity-#{$rarity} {
-      background: linear-gradient(135deg, #{$color}, #{$dark-blue});
-    }
-  }
-}
-
-.tile.matched {
-  @each $rarity, $color in $rarity-colors {
-    & .rarity-border-#{$rarity} {
-      background: linear-gradient(90deg, #{$color}, #{$dark-blue});
-
-      @include halo-border($color);
     }
   }
 }

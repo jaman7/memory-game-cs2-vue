@@ -5,13 +5,15 @@
   background-color: var(--main-bg-secondary);
   border-radius: 1rem 0 0 1rem;
   position: relative;
-  transition: transform 0.5s ease-in-out;
+  transition:
+    transform 0.5s ease-in-out,
+    width 0.5s ease-in-out;
   display: flex;
   transform: translateX(100%);
   max-height: 100vh;
-  width: 100%;
+  width: 0;
   max-width: 310px;
-  will-change: transform;
+  will-change: transform, width;
 
   @extend %shared-box-shadow;
   @include scrollbar-vertical;
@@ -24,16 +26,20 @@
   }
 
   &.open {
+    width: 310px;
     transform: translateX(0);
 
+    @include mq(maxsm) {
+      width: 280px;
+    }
+
     & .sidebar-container {
-      flex: 0 0 310px;
       opacity: 1;
       visibility: visible;
       padding: 1rem;
 
       @include mq(maxsm) {
-        flex: 0 0 310px;
+        flex: 0 0 280px;
       }
     }
 
@@ -50,11 +56,11 @@
       padding 0.5s ease-in-out;
     opacity: 0;
     gap: 1rem;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    flex: 0 0 0;
-    max-width: 320px;
+
+    // flex: 0 0 0;
+    max-width: 390px;
     padding: 0;
     overflow: hidden;
     visibility: hidden;

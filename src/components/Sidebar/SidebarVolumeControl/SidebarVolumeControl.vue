@@ -27,7 +27,6 @@
         aria-label="Głośność"
         list="volume-ticks"
       />
-      <div class="volume-indicator">{{ localVolume }}%</div>
     </div>
   </div>
 </template>
