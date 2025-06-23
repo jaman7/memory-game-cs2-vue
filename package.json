@@ -15,7 +15,9 @@
     "test:unit": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "testreport": "vitest run --coverage.enabled=true --coverage.reporter=html --coverage.reportsDirectory=coverage",
+    "posttestreport": "node fix-coverage-paths.cjs"
   },
   "lint-staged": {
     "*.{js,ts,vue}": "eslint --fix",

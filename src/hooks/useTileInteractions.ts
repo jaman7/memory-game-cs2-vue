@@ -52,8 +52,9 @@ export function useTileInteractions(
     if (!canvas || !ctx) return;
 
     const rect = canvas.getBoundingClientRect();
-    const clientX = e instanceof TouchEvent ? e.changedTouches[0].clientX : e.clientX;
-    const clientY = e instanceof TouchEvent ? e.changedTouches[0].clientY : e.clientY;
+    const isTouch = 'changedTouches' in e;
+    const clientX = isTouch ? e.changedTouches[0].clientX : (e as MouseEvent).clientX;
+    const clientY = isTouch ? e.changedTouches[0].clientY : (e as MouseEvent).clientY;
     const x = clientX - rect.left;
     const y = clientY - rect.top;
 

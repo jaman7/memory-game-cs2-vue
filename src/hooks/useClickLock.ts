@@ -2,10 +2,8 @@ import { ref } from 'vue';
 
 export function useClickLock() {
   const locked = ref(false);
-  console.log(isLocked());
 
   function isLocked() {
-    console.log('isLocked', locked.value);
     return locked.value;
   }
 
