@@ -2,6 +2,16 @@
 
 An interactive memory game featuring weapon graphics from Counter-Strike 2.
 
+## Demo
+
+[https://memory-game-cs2-vue.pages.dev](https://memory-game-cs2-vue.pages.dev)
+
+---
+
+## 🔗 Vitest Coverage Report
+
+[https://memory-game-cs2-vue-tests.pages.dev/](https://memory-game-cs2-vue-tests.pages.dev/)
+
 ## Technologies
 
 - [Vue 3](https://vuejs.org/)
