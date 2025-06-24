@@ -21,19 +21,34 @@ export function useCanvasRenderer(
   }
 
   function startAnimationLoop() {
-    function loop() {
-      const canvas = canvasRef.value;
-      const ctx = canvas?.getContext('2d');
-      if (canvas && ctx) {
-        tiles.value.forEach((tile) => {
-          if (tile.matched && tile.haloAngle !== undefined) {
-            tile.haloAngle = (tile.haloAngle + 0.03) % (Math.PI * 2);
-          }
-        });
-        drawBoard(ctx, canvas, tiles.value, { x: mouseX.value, y: mouseY.value }, hoveredTileId.value, tileSize.value, fadeStartTime);
+    let lastRenderTime = 0;
+    const FRAME_INTERVAL = 1000 / 90;
+
+    function loop(currentTime: number) {
+      const delta = currentTime - lastRenderTime;
+
+      let shouldRedraw = false;
+
+      tiles.value.forEach((tile) => {
+        if (tile.matched && tile.haloAngle !== undefined) {
+          const previousAngle = tile.haloAngle;
+          tile.haloAngle = (tile.haloAngle + 0.03) % (Math.PI * 2);
+          if (tile.haloAngle !== previousAngle) shouldRedraw = true;
+        }
+      });
+
+      if (delta >= FRAME_INTERVAL && shouldRedraw) {
+        const canvas = canvasRef.value;
+        const ctx = canvas?.getContext('2d');
+        if (canvas && ctx) {
+          drawBoard(ctx, canvas, tiles.value, { x: mouseX.value, y: mouseY.value }, hoveredTileId.value, tileSize.value, fadeStartTime);
+          lastRenderTime = currentTime;
+        }
       }
+
       requestAnimationFrame(loop);
     }
+
     requestAnimationFrame(loop);
   }
 
