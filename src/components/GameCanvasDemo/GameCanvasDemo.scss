@@ -1,4 +1,5 @@
 @import '@scss/extend';
+@import '@scss/mixins';
 
 $rarity-colors: (
   consumer: #999,
@@ -28,7 +29,7 @@ $dark-blue: #0860d8;
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 8px;
+    border-radius: 0.75rem;
     background: linear-gradient(90deg, $color, white, $color);
     background-size: 200% 200%;
     animation: halo-spin 1s linear infinite;
@@ -75,7 +76,7 @@ $dark-blue: #0860d8;
 
       & > .tile-back,
       & > .tile-front {
-        border-radius: 8px;
+        border-radius: 0.9rem;
         position: absolute;
         width: 100%;
         height: 100%;
@@ -141,9 +142,11 @@ $dark-blue: #0860d8;
         bottom: 1rem;
         left: 1rem;
         color: var(--main-text-white);
-        font-size: 1.25rem;
         font-weight: 500;
 
+        @include fluid-type(8px, 32px);
+        @include fluid-type(6px, 16px, bottom);
+        @include fluid-type(6px, 16px, left);
         @extend %text-shadow;
       }
     }

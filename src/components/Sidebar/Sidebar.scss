@@ -10,19 +10,18 @@
     width 0.5s ease-in-out;
   display: flex;
   transform: translateX(100%);
+  height: 100vh;
   max-height: 100vh;
   width: 0;
   max-width: 310px;
   will-change: transform, width;
 
   @extend %shared-box-shadow;
-  @include scrollbar-vertical;
 
   @include mq(maxsm) {
     position: fixed;
     right: 0;
     top: 0;
-    height: 100vh;
   }
 
   &.open {
@@ -37,6 +36,10 @@
       opacity: 1;
       visibility: visible;
       padding: 1rem;
+      overflow-y: auto;
+      max-height: 100vh;
+
+      @include scrollbar-vertical(12px);
 
       @include mq(maxsm) {
         flex: 0 0 280px;
@@ -58,11 +61,8 @@
     gap: 1rem;
     display: flex;
     flex-direction: column;
-
-    // flex: 0 0 0;
     max-width: 390px;
     padding: 0;
-    overflow: hidden;
     visibility: hidden;
     will-change: transform, opacity, flex-basis;
   }
